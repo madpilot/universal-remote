@@ -34,19 +34,19 @@ var handler = function(device, event, key, cb) {
   if(typeof devices[device] != "undefined") {
     switch(event) {
       case 'sendOnce':
-        logger.info("Sending " + key + " " + device);
+        logger.info("Sending " + key + " to " + device);
         devices[device].sendOnce(key, cb);
         break;
       case 'sendStart':
-        logger.info("Starting " + key + " " + device);
+        logger.info("Starting " + key + " on " + device);
         devices[device].sendStart(key, cb);
         break;
       case 'sendStop':
-        logger.info("Stopping " + key + " " + device);
+        logger.info("Stopping " + key + " on " + device);
         devices[device].sendStop(key, cb);
         break;
       case 'list':
-        logger.info("Listing " + device);
+        logger.info("Listing keys on " + device);
         devices[device].list(cb);
         break;
     }
