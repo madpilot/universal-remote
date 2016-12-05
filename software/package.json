@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/madpilot/ir-blaster#readme",
   "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
     "lirc_node": "0.0.4"
   }
 }

@@ -4,9 +4,6 @@ function LIRCDevice(device) {
   this.device = device;
 }
 
-LIRCDevice.prototype.setup = function() {}
-LIRCDevice.prototype.tearDown = function() {}
-
 LIRCDevice.prototype.list = function(callback) {
   irsend.list(this.device, "", function(_, _, result) {
     var lines = result.split("\n");
@@ -18,7 +15,7 @@ LIRCDevice.prototype.list = function(callback) {
         keys.push(parts[2]);
       }
     }
-    callback(keys);
+    callback(null, keys);
   });
 }
 
