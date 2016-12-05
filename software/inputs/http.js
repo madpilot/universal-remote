@@ -1,3 +1,4 @@
+var logger = require('winston');
 var express = require('express')
 var bodyParser = require('body-parser');
 
@@ -9,55 +10,67 @@ app.use(bodyParser.json());
 
 function HttpInput(config) {
   this.config = config;
+  this.bind = config.bind || "0.0.0.0";
+  this.port = config.port || 80;
+}
+
+function setHeaders(res) {
+  res.setHeader('Content-Type', 'application/json');
+}
+
+function returnError(res, error) {
+  res.status(500);
+  res.send(JSON.stringify({ error: error }));
 }
 
 HttpInput.prototype.listen = function(handler) {
-  app.get("/list", function(req, res) {
-    res.send("list");
-  });
-
+  var context = this;
   app.get("/list/:device/", function(req, res) {
     handler(req.params.device, "list", null, function(error, keys) {
+      setHeaders(res);
       if(error != null) {
-        res.send(error);
-        return;
+        returnError(res, error);
+      } else {
+        res.send(JSON.stringify(keys));
       }
-      res.send(JSON.stringify(keys));
     });
   });
 
   app.put("/send/:device", function(req, res) {
     handler(req.params.device, "sendOnce", req.body.key, function(error, success) {
+      setHeaders(res);
       if(error != null) {
-        res.send(error);
-        return;
+        returnError(res, error);
+      } else {
+        res.send(JSON.stringify({ status: "OK" }));
       }
-      res.send("OK");
     });
   });
 
   app.put("/start/:device/:key", function(req, res) {
     handler(req.params.device, "sendStart", req.params.key, function(error, success) {
+      setHeaders(res);
       if(error != null) {
-
-        return;
+        returnError(res, error);
+      } else {
+        res.send(JSON.stringify({ status: "OK" }));
       }
-
     });
   });
 
   app.put("/stop/:device/:key", function(req, res) {
     handler(req.params.device, "sendStop", req.params.key, function(error, success) {
+     setHeaders(res);
       if(error != null) {
-
-        return;
+        returnError(res, error);
+      } else {
+        res.send(JSON.stringify({ status: "OK" }));
       }
-
     });
   });
 
-  app.listen(this.config.port || 80, function() {
-
+  app.listen(this.port, function() {
+    logger.info("HTTP API listening on " + context.bind + ":" + context.port);
   });
 }
 
