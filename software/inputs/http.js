@@ -19,6 +19,7 @@ function setHeaders(res) {
 }
 
 function returnError(res, error) {
+  logger.error("[HTTP Input] Error sendingStop: " + error);
   res.status(500);
   res.send(JSON.stringify({ error: error }));
 }
@@ -70,7 +71,7 @@ HttpInput.prototype.listen = function(handler) {
   });
 
   app.listen(this.port, function() {
-    logger.info("HTTP API listening on " + context.bind + ":" + context.port);
+    logger.info("[HTTP Input] Listening on " + context.bind + ":" + context.port);
   });
 }
 
