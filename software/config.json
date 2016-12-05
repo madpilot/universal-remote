@@ -1,0 +1,26 @@
+{
+  "inputs": [
+    {
+      "driver": "lirc"
+    },
+    {
+      "driver": "http",
+      "config": {
+        "bind": "0.0.0.0",
+        "port": 80
+      }
+    }
+  ],
+  "devices": [
+    {
+      "driver": "lirc",
+      "id": "receiver",
+      "name": "Yamaha Receiver"
+    },
+    {
+      "driver": "lirc",
+      "id": "foxtel",
+      "name": "Foxtel"
+    }
+  ]
+}

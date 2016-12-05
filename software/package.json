@@ -1,0 +1,22 @@
+{
+  "name": "universal-remote",
+  "version": "0.0.1",
+  "description": "Universal Remote Control API for lircd",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madpilot/ir-blaster.git"
+  },
+  "author": "Myles Eftos",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/madpilot/ir-blaster/issues"
+  },
+  "homepage": "https://github.com/madpilot/ir-blaster#readme",
+  "dependencies": {
+    "lirc_node": "0.0.4"
+  }
+}
