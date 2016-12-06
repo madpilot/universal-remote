@@ -31,6 +31,18 @@ for(var i = 0; i < config.devices.length; i++) {
 }
 
 var handler = function(device, event, key, cb) {
+  if(device == null) {
+    logger.info("Listing devices");
+    var ids = [];
+    
+    for(var id in devices) {
+      ids.push(id);
+    }
+    
+    cb(null, ids);
+    return;
+  }
+  
   if(typeof devices[device] != "undefined") {
     switch(event) {
       case 'sendOnce':
@@ -56,5 +68,3 @@ var handler = function(device, event, key, cb) {
 for(var i = 0; i < inputs.length; i++) {
   inputs[i].listen(handler);
 }
-
-
