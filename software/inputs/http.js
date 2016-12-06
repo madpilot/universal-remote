@@ -26,6 +26,17 @@ function returnError(res, error) {
 
 HttpInput.prototype.listen = function(handler) {
   var context = this;
+  app.get("/devices", function(req, res) {
+    handler(null, null, null, function(error, ids) {
+      setHeaders(res);
+      if(error != null) {
+        returnError(res, error);
+      } else {
+        res.send(JSON.stringify(ids));
+      }
+    });
+  });
+  
   app.get("/list/:device/", function(req, res) {
     handler(req.params.device, "list", null, function(error, keys) {
       setHeaders(res);
