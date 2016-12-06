@@ -1,3 +1,4 @@
 *.b#?
 *.sw?
+*.lck
 node_modules
