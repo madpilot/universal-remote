@@ -77,7 +77,7 @@ function handler(device, event, key, cb) {
         break;
       case 'statuses':
         logger.info("Requesting list of supported statuses from " + device);
-        devices[devices].statuses(cb);
+        devices[device].statuses(cb);
         break;
     }
   }

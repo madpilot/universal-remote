@@ -82,11 +82,11 @@ LIRCDevice.prototype.sendStop = function(key) {
   });
 }
 
-LIRCDevice.prototype.status = function(status) {
+LIRCDevice.prototype.status = function(status, cb) {
   cb("Not supported");
 }
 
-LIRCDevice.prototype.statuses = function(status) {
+LIRCDevice.prototype.statuses = function(cb) {
   cb(null, []);
 }
 

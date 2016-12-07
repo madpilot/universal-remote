@@ -18,8 +18,8 @@ function setHeaders(res) {
   res.setHeader('Content-Type', 'application/json');
 }
 
-function returnError(res, error) {
-  logger.error("[HTTP Input] Error sendingStop: " + error);
+function returnError(req, res, error) {
+  logger.error("[HTTP Input] " + req.method + " " + req.url + " " + error);
   res.status(500);
   res.send(JSON.stringify({ error: error }));
 }
@@ -30,7 +30,7 @@ HttpInput.prototype.listen = function(handler) {
     handler(null, null, null, function(error, ids) {
       setHeaders(res);
       if(error != null) {
-        returnError(res, error);
+        returnError(req, res, error);
       } else {
         res.send(JSON.stringify(ids));
       }
@@ -41,7 +41,7 @@ HttpInput.prototype.listen = function(handler) {
     handler(req.params.device, "list", null, function(error, keys) {
       setHeaders(res);
       if(error != null) {
-        returnError(res, error);
+        returnError(req, res, error);
       } else {
         res.send(JSON.stringify(keys));
       }
@@ -52,7 +52,7 @@ HttpInput.prototype.listen = function(handler) {
     handler(req.params.device, "sendOnce", req.body.key, function(error, success) {
       setHeaders(res);
       if(error != null) {
-        returnError(res, error);
+        returnError(req, res, error);
       } else {
         res.send(JSON.stringify({ status: "OK" }));
       }
@@ -63,7 +63,7 @@ HttpInput.prototype.listen = function(handler) {
     handler(req.params.device, "sendStart", req.params.key, function(error, success) {
       setHeaders(res);
       if(error != null) {
-        returnError(res, error);
+        returnError(req, res, error);
       } else {
         res.send(JSON.stringify({ status: "OK" }));
       }
@@ -74,12 +74,36 @@ HttpInput.prototype.listen = function(handler) {
     handler(req.params.device, "sendStop", req.params.key, function(error, success) {
      setHeaders(res);
       if(error != null) {
-        returnError(res, error);
+        returnError(req, res, error);
       } else {
         res.send(JSON.stringify({ status: "OK" }));
       }
     });
   });
+
+  app.get("/status/:device", function(req, res) {
+    handler(req.params.device, "status", req.params.key, function(error, status) {
+     setHeaders(res);
+      if(error != null) {
+        returnError(req, res, error);
+      } else {
+        res.send(JSON.stringify(status));
+      }
+    });
+  });
+
+  app.get("/statuses/:device", function(req, res) {
+    handler(req.params.device, "statuses", null, function(error, statuses) {
+      setHeaders(res);
+      if(error != null) {
+        returnError(req, res, error);
+      } else {
+        res.send(JSON.stringify(statuses));
+      }
+    });
+  });
+
+
 
   app.listen(this.port, function() {
     logger.info("[HTTP Input] Listening on " + context.bind + ":" + context.port);
