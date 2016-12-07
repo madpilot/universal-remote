@@ -37,4 +37,12 @@ LIRCDevice.prototype.sendStop = function(key) {
   });
 }
 
+LIRCDevice.prototype.status = function(status) {
+  cb("Not supported");
+}
+
+LIRCDevice.prototype.statuses = function(status) {
+  cb(null, []);
+}
+
 module.exports = LIRCDevice;

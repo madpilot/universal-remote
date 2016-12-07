@@ -10,6 +10,10 @@ var inputDrivers = {
   http: require('./inputs/http.js')
 }
 
+var subscriberObjects = {
+  
+}
+
 var inputs = [];
 for(var i = 0; i < config.inputs.length; i++) {
   var input = config.inputs[i];
@@ -18,6 +22,11 @@ for(var i = 0; i < config.inputs.length; i++) {
     var server = new inputDrivers.http(input.config);
     inputs.push(server);
   }
+}
+
+var subscribers = []
+for(var i = 0; i < config.subscribers.length; i++) {
+  var subscriber = config.subscribers[i];
 }
 
 var devices = {};
@@ -30,7 +39,13 @@ for(var i = 0; i < config.devices.length; i++) {
   }
 }
 
-var handler = function(device, event, key, cb) {
+function notify(device, event) {
+  for(var i = 0; i < subscribers.length; i++) {
+    subscribers[i].notify(device, event);
+  }
+}
+
+function handler(device, event, key, cb) {
   if(device == null) {
     logger.info("Listing devices");
     var ids = [];
@@ -60,6 +75,14 @@ var handler = function(device, event, key, cb) {
       case 'list':
         logger.info("Listing keys on " + device);
         devices[device].list(cb);
+        break;
+      case 'status':
+        logger.info("Requesting status from " + device);
+        devices[device].status(event, cb);
+        break;
+      case 'statuses':
+        logger.info("Requesting list of supported statuses from " + device);
+        devices[devices].statuses(cb);
         break;
     }
   }
