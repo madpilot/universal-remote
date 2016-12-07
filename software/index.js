@@ -11,7 +11,7 @@ var inputDrivers = {
 }
 
 var subscriberObjects = {
-  
+
 }
 
 var inputs = [];
@@ -32,10 +32,16 @@ for(var i = 0; i < config.subscribers.length; i++) {
 var devices = {};
 for(var i = 0; i < config.devices.length; i++) {
   var device = config.devices[i];
+  var driver = null;
+
   if(device.driver == "lirc") {
-    logger.info("Loading " + device.id + " using the lirc device driver");
-    var receiver = new deviceDrivers.lirc(device.id);
-    devices[device.id] = receiver;
+    driver = deviceDrivers.lirc;
+  }
+
+  if(driver != null) {
+    driver.initialize(device, function(error, list) {
+      Object.assign({}, devices, list);
+    });
   }
 }
 
@@ -49,15 +55,15 @@ function handler(device, event, key, cb) {
   if(device == null) {
     logger.info("Listing devices");
     var ids = [];
-    
+
     for(var id in devices) {
       ids.push(id);
     }
-    
+
     cb(null, ids);
     return;
   }
-  
+
   if(typeof devices[device] != "undefined") {
     switch(event) {
       case 'sendOnce':

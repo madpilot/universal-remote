@@ -14,13 +14,7 @@
   "devices": [
     {
       "driver": "lirc",
-      "id": "receiver",
-      "name": "Yamaha Receiver"
-    },
-    {
-      "driver": "lirc",
-      "id": "foxtel",
-      "name": "Foxtel"
+      "discover": true
     }
   ],
   "subscribers": []

@@ -4,6 +4,40 @@ function LIRCDevice(device) {
   this.device = device;
 }
 
+LIRCDevice.initialize = function(device, cb) {
+  var names = [];
+  if(device.discover) {
+    names = LIRCDevice.devices(function(error, names) {
+      var devices = {};
+      for(var j = 0; j < names.length; j++) {
+        var name = names[j].toLowerCase().replace(/(^[a-z0-9])/, '-');
+        console.log(name);
+        var receiver = new LIRCDevice(names[j]);
+        devices["lirc:" + names[j]] = receiver;
+      }
+      cb(null, devices);
+    });
+  } else {
+    // Manually iterate and create objects
+  }
+}
+
+LIRCDevice.devices = function(callback) {
+  irsend.list("", "", function(_, _, result) {
+    var lines = result.split("\n");
+
+    var devices = [];
+    for(var i = 0; i < lines.length; i++) {
+      if(lines[i].length > 0) {
+        console.log(lines[i]);
+        var parts = lines[i].split(' ');
+        devices.push(parts[2]);
+      }
+    }
+    callback(null, devices);
+  });
+}
+
 LIRCDevice.prototype.list = function(callback) {
   irsend.list(this.device, "", function(_, _, result) {
     var lines = result.split("\n");
