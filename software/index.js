@@ -10,9 +10,6 @@ var inputDrivers = {
   http: require('./inputs/http.js')
 }
 
-var subscriberObjects = {
-
-}
 
 var inputs = [];
 for(var i = 0; i < config.inputs.length; i++) {
@@ -22,11 +19,6 @@ for(var i = 0; i < config.inputs.length; i++) {
     var server = new inputDrivers.http(input.config);
     inputs.push(server);
   }
-}
-
-var subscribers = []
-for(var i = 0; i < config.subscribers.length; i++) {
-  var subscriber = config.subscribers[i];
 }
 
 var devices = {};
@@ -39,15 +31,12 @@ for(var i = 0; i < config.devices.length; i++) {
   }
 
   if(driver != null) {
-    driver.initialize(device, function(error, list) {
-      Object.assign({}, devices, list);
+    driver.initialize(device.config, function(error, list) {
+      for(var key in list) {
+        logger.info("Added " + key + " to devices");
+      }
+      devices = Object.assign({}, devices, list);
     });
-  }
-}
-
-function notify(device, event) {
-  for(var i = 0; i < subscribers.length; i++) {
-    subscribers[i].notify(device, event);
   }
 }
 

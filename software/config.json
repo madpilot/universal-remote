@@ -14,8 +14,9 @@
   "devices": [
     {
       "driver": "lirc",
-      "discover": true
+      "config": {
+        "discover": true
+      }
     }
-  ],
-  "subscribers": []
+  ]
 }

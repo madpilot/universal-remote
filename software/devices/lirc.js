@@ -4,21 +4,33 @@ function LIRCDevice(device) {
   this.device = device;
 }
 
-LIRCDevice.initialize = function(device, cb) {
+function buildObjects(names) {
+  var devices = {};
+
+  for(var i = 0; i < names.length; i++) {
+    if(names[i]) {
+      var name = names[i].toLowerCase().replace(/[^(a-z0-9)]/, '-').replace('--', '-');
+      var receiver = new LIRCDevice(name);
+      devices["lirc-" + name] = receiver;
+    }
+  }
+  return devices;
+}
+
+LIRCDevice.initialize = function(config, cb) {
   var names = [];
-  if(device.discover) {
-    names = LIRCDevice.devices(function(error, names) {
-      var devices = {};
-      for(var j = 0; j < names.length; j++) {
-        var name = names[j].toLowerCase().replace(/(^[a-z0-9])/, '-');
-        console.log(name);
-        var receiver = new LIRCDevice(names[j]);
-        devices["lirc:" + names[j]] = receiver;
+  if(config.discover) {
+    LIRCDevice.devices(function(error, names) {
+      if(error == null) {
+        cb(null, buildObjects(names));
+      } else {
+        cb(error);
       }
-      cb(null, devices);
     });
   } else {
-    // Manually iterate and create objects
+    if(config.names) {
+      cb(null, buildObjects(config.names));
+    }
   }
 }
 
@@ -29,9 +41,8 @@ LIRCDevice.devices = function(callback) {
     var devices = [];
     for(var i = 0; i < lines.length; i++) {
       if(lines[i].length > 0) {
-        console.log(lines[i]);
         var parts = lines[i].split(' ');
-        devices.push(parts[2]);
+        devices.push(parts[1]);
       }
     }
     callback(null, devices);
