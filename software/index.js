@@ -3,31 +3,29 @@ var logger = require('winston');
 var config = require('./config.json');
 
 var deviceDrivers = {
-  lirc: require('./devices/lirc.js')
+  lirc: require('./devices/lirc.js'),
+  virtual: require('./devices/virtual.js')
 };
 
 var inputDrivers = {
-  http: require('./inputs/http.js')
+  http: require('./inputs/http.js'),
+  virtual: require('./inputs/virtual.js')
 }
 
-
-var inputs = [];
-for(var i = 0; i < config.inputs.length; i++) {
-  var input = config.inputs[i];
-  if(input.driver == "http") {
-    logger.info("Loading the http input driver");
-    var server = new inputDrivers.http(input.config);
-    inputs.push(server);
-  }
-}
+var virtualInput = new inputDrivers.virtual();
 
 var devices = {};
 for(var i = 0; i < config.devices.length; i++) {
   var device = config.devices[i];
   var driver = null;
 
-  if(device.driver == "lirc") {
-    driver = deviceDrivers.lirc;
+  switch(device.driver) {
+    case "lirc":
+      driver = deviceDrivers.lirc;
+      break;
+    case "virtual":
+      driver = deviceDrivers.virtual(virtualInput);
+      break;
   }
 
   if(driver != null) {
@@ -37,6 +35,23 @@ for(var i = 0; i < config.devices.length; i++) {
       }
       devices = Object.assign({}, devices, list);
     });
+  }
+}
+
+var inputs = [ virtualInput ];
+for(var i = 0; i < config.inputs.length; i++) {
+  var input = config.inputs[i];
+  var server = null;
+
+  switch(input.driver) {
+    case "http":
+      logger.info("Loading the http input driver");
+      server = new inputDrivers.http(input.config);
+      break;
+  }
+
+  if(server != null) {
+    inputs.push(server);
   }
 }
 

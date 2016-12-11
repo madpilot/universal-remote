@@ -17,6 +17,10 @@
       "config": {
         "discover": true
       }
+    },
+    {
+      "driver": "virtual",
+      "config": "virtual/sonos"
     }
   ]
 }
