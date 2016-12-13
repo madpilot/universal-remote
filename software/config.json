@@ -21,7 +21,12 @@
     {
       "driver": "cec",
       "config": {
-        "names": [ "tv" ]
+        "types": [ "recorder" ],
+        "monitor": false,
+        "devices": [
+          { "name": "tv", "address": 0 },
+          { "name": "receiver", "address": 3 }
+        ]
       }
     },
     {

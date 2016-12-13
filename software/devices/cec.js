@@ -1,6 +1,6 @@
-var cecsend = require('cec_node').send;
-var cecreceive = require('cec_node').receive;
-var CONSTANTS = require('cec_node').CONSTANTS;
+var CEC = require('cec_node');
+
+var CONSTANTS = CEC.CONSTANTS;
 var USER_CONTROL_CODES = CONSTANTS.USER_CONTROL_CODES;
 
 var KEYS = {
@@ -65,15 +65,24 @@ function buildObjects(names) {
   return devices;
 }
 
-function CECDevice(device) {
-  this.device = device;
+function CECDevice(cec, device, address) {
+  this.cec = cec;
+  this.source = 1;
+  this.destination = address;
 }
 
 CECDevice.initialize = function(config, cb) {
+  var devices = {}
+  var cec = CEC.start(config.types, config.monitor);
+  for(var i = 0; i < config.devices.length; i++) {
+    var device = config.devices[i];
+    var receiver = new CECDriver(cec, device.name, device.address);
+    devices['cec-' + device.name] = receiver;
+  }
 }
 
-CECDevice.devices = function(callback) {
-
+function CECDevice.prototype.buildCode(opcode, data) {
+  return this.source + "" + this.destination + ":" + opcode + (data ? ":" + data : "");
 }
 
 CECDevice.prototype.list = function(callback) {
@@ -85,14 +94,28 @@ CECDevice.prototype.list = function(callback) {
 }
 
 CECDevice.prototype.sendOnce = function(key, cb) {
-
+  var context = this;
+  this.sendStart(key, function(error, data) {
+    if(error) {
+      cb(error);
+      return;
+    }
+    context.sendStop(key, cb);
+  });
 }
 
-CECDevice.prototype.sendStart = function(key) {
+function formatHex(num) {
+  return ("00" + num.toString(16)).substr(-2);
 }
 
-CECDevice.prototype.sendStop = function(key) {
+CECDevice.prototype.sendStart = function(key, cb) {
+  var down = buildCode(44, formatHex(KEYS[key]));
+  this.cec.send(code, cb)
+}
 
+CECDevice.prototype.sendStop = function(key, cb) {
+  var down = buildCode(45);
+  this.cec.send(code, cb)
 }
 
 CECDevice.prototype.status = function(status, cb) {
