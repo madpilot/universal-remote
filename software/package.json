@@ -18,6 +18,7 @@
   "homepage": "https://github.com/madpilot/ir-blaster#readme",
   "dependencies": {
     "body-parser": "^1.15.2",
+    "cec_node": "git+https://git@github.com/madpilot/cec_node.git",
     "express": "^4.14.0",
     "lirc_node": "0.0.4",
     "winston": "^2.3.0"

@@ -19,6 +19,12 @@
       }
     },
     {
+      "driver": "cec",
+      "config": {
+        "names": [ "tv" ]
+      }
+    },
+    {
       "driver": "virtual",
       "config": "virtual/sonos"
     }

@@ -1,0 +1,106 @@
+var cecsend = require('cec_node').send;
+var cecreceive = require('cec_node').receive;
+var CONSTANTS = require('cec_node').CONSTANTS;
+var USER_CONTROL_CODES = CONSTANTS.USER_CONTROL_CODES;
+
+var KEYS = {
+  KEY_SELECT: USER_CONTROL_CODES.SELECT,
+  KEY_UP: USER_CONTROL_CODES.UP,
+  KEY_DOWN: USER_CONTROL_CODES.DOWN,
+  KEY_LEFT: USER_CONTROL_CODES.LEFT,
+  KEY_RIGHT: USER_CONTROL_CODES.RIGHT,
+  KEY_SETUP: USER_CONTROL_CODES.SETUP,
+  KEY_FAVOURITES: USER_CONTROL_CODES.FAVOURITE_MENU,
+  KEY_0: USER_CONTROL_CODES.KEY_0,
+  KEY_1: USER_CONTROL_CODES.KEY_1,
+  KEY_2: USER_CONTROL_CODES.KEY_2,
+  KEY_3: USER_CONTROL_CODES.KEY_3,
+  KEY_4: USER_CONTROL_CODES.KEY_4,
+  KEY_5: USER_CONTROL_CODES.KEY_5,
+  KEY_6: USER_CONTROL_CODES.KEY_6,
+  KEY_7: USER_CONTROL_CODES.KEY_7,
+  KEY_8: USER_CONTROL_CODES.KEY_8,
+  KEY_9: USER_CONTROL_CODES.KEY_9,
+  KEY_DOT: USER_CONTROL_CODES.DOT,
+  KEY_ENTER: USER_CONTROL_CODES.ENTER,
+  KEY_CLEAR: USER_CONTROL_CODES.CLEAR,
+  KEY_CHANNELUP: USER_CONTROL_CODES.CHANNEL_UP,
+  KEY_CHANNELDOWN: USER_CONTROL_CODES.CHANNEL_DOWN,
+  KEY_SOUND: USER_CONTROL_CODES.SOUND,
+  KEY_INFO: USER_CONTROL_CODES.DISPLAY_INFO,
+  KEY_HELP: USER_CONTROL_CODES.HELP,
+  KEY_PAGEUP: USER_CONTROL_CODES.PAGEUP,
+  KEY_PAGEDOWN: USER_CONTROL_CODES.PAGEDOWN,
+  KEY_POWER: USER_CONTROL_CODES.POWER,
+  KEY_VOLUMUP: USER_CONTROL_CODES.VOLUME_UP,
+  KEY_VOLUMEDOWN: USER_CONTROL_CODES.VOLUME_DOWN,
+  KEY_MUTE: USER_CONTROL_CODES.MUTE,
+  KEY_PLAY: USER_CONTROL_CODES.PLAY,
+  KEY_STOP: USER_CONTROL_CODES.STOP,
+  KEY_PAUSE: USER_CONTROL_CODES.PAUSE,
+  KEY_RECORD: USER_CONTROL_CODES.RECORD,
+  KEY_REWIND: USER_CONTROL_CODES.REWIND,
+  KEY_FASTFORWARD: USER_CONTROL_CODES.FAST_FORWARD,
+  KEY_EJECTCD: USER_CONTROL_CODES.EJECT,
+  KEY_FORWARD: USER_CONTROL_CODES.FORWARD,
+  KEY_BACKWARD: USER_CONTROL_CODES.BACKWARD,
+  KEY_ANGLE: USER_CONTROL_CODES.ANGLE,
+  KEY_EPG: USER_CONTROL_CODES.EPG,
+  KEY_BLUE: USER_CONTROL_CODES.BLUE,
+  KEY_RED: USER_CONTROL_CODES.RED,
+  KEY_GREEN: USER_CONTROL_CODES.GREEN,
+  KEY_YELLOW: USER_CONTROL_CODES.YELLO
+}
+
+function buildObjects(names) {
+  var devices = {};
+
+  for(var i = 0; i < names.length; i++) {
+    if(names[i]) {
+      var name = names[i];
+      var receiver = new CECDevice(name);
+      devices["name-" + name] = receiver;
+    }
+  }
+  return devices;
+}
+
+function CECDevice(device) {
+  this.device = device;
+}
+
+CECDevice.initialize = function(config, cb) {
+}
+
+CECDevice.devices = function(callback) {
+
+}
+
+CECDevice.prototype.list = function(callback) {
+  var keys = [];
+  for(var key in KEYS) {
+    keys.push(key);
+  }
+  callback(null, keys);
+}
+
+CECDevice.prototype.sendOnce = function(key, cb) {
+
+}
+
+CECDevice.prototype.sendStart = function(key) {
+}
+
+CECDevice.prototype.sendStop = function(key) {
+
+}
+
+CECDevice.prototype.status = function(status, cb) {
+  cb("Not supported");
+}
+
+CECDevice.prototype.statuses = function(cb) {
+  cb(null, []);
+}
+
+module.exports = CECDevice;
