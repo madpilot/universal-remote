@@ -52,19 +52,6 @@ var KEYS = {
   KEY_YELLOW: USER_CONTROL_CODES.YELLO
 }
 
-function buildObjects(names) {
-  var devices = {};
-
-  for(var i = 0; i < names.length; i++) {
-    if(names[i]) {
-      var name = names[i];
-      var receiver = new CECDevice(name);
-      devices["name-" + name] = receiver;
-    }
-  }
-  return devices;
-}
-
 function CECDevice(cec, device, address) {
   this.cec = cec;
   this.source = 1;
@@ -73,15 +60,18 @@ function CECDevice(cec, device, address) {
 
 CECDevice.initialize = function(config, cb) {
   var devices = {}
-  var cec = CEC.start(config.types, config.monitor);
+  var cec = CEC.start({ name: 'ir-blaster' });
+
   for(var i = 0; i < config.devices.length; i++) {
     var device = config.devices[i];
-    var receiver = new CECDriver(cec, device.name, device.address);
+    var receiver = new CECDevice(cec, device.name, device.address);
     devices['cec-' + device.name] = receiver;
   }
+
+  cb(null, devices);
 }
 
-function CECDevice.prototype.buildCode(opcode, data) {
+CECDevice.prototype.buildCode = function(opcode, data) {
   return this.source + "" + this.destination + ":" + opcode + (data ? ":" + data : "");
 }
 

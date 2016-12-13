@@ -7,7 +7,6 @@ function VirtualDevice(input) {
   }
 
   Inner.initialize = function(config, cb) {
-    var context
     fs.readFile(config, function(error, data) {
       if(error) {
         cb(error);

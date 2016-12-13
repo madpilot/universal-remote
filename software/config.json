@@ -21,17 +21,11 @@
     {
       "driver": "cec",
       "config": {
-        "types": [ "recorder" ],
-        "monitor": false,
         "devices": [
           { "name": "tv", "address": 0 },
           { "name": "receiver", "address": 3 }
         ]
       }
-    },
-    {
-      "driver": "virtual",
-      "config": "virtual/sonos"
     }
   ]
 }

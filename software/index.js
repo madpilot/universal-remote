@@ -4,6 +4,7 @@ var config = require('./config.json');
 
 var deviceDrivers = {
   lirc: require('./devices/lirc.js'),
+  cec: require('./devices/cec.js'),
   virtual: require('./devices/virtual.js')
 };
 
@@ -22,6 +23,9 @@ for(var i = 0; i < config.devices.length; i++) {
   switch(device.driver) {
     case "lirc":
       driver = deviceDrivers.lirc;
+      break;
+    case "cec":
+      driver = deviceDrivers.cec;
       break;
     case "virtual":
       driver = deviceDrivers.virtual(virtualInput);
