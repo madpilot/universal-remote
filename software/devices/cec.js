@@ -32,7 +32,7 @@ var KEYS = {
   KEY_PAGEUP: USER_CONTROL_CODES.PAGEUP,
   KEY_PAGEDOWN: USER_CONTROL_CODES.PAGEDOWN,
   KEY_POWER: USER_CONTROL_CODES.POWER,
-  KEY_VOLUMUP: USER_CONTROL_CODES.VOLUME_UP,
+  KEY_VOLUMEUP: USER_CONTROL_CODES.VOLUME_UP,
   KEY_VOLUMEDOWN: USER_CONTROL_CODES.VOLUME_DOWN,
   KEY_MUTE: USER_CONTROL_CODES.MUTE,
   KEY_PLAY: USER_CONTROL_CODES.PLAY,
@@ -49,7 +49,8 @@ var KEYS = {
   KEY_BLUE: USER_CONTROL_CODES.BLUE,
   KEY_RED: USER_CONTROL_CODES.RED,
   KEY_GREEN: USER_CONTROL_CODES.GREEN,
-  KEY_YELLOW: USER_CONTROL_CODES.YELLO
+  KEY_YELLOW: USER_CONTROL_CODES.YELLOW,
+  KEY_STANDBY: USER_CONTROL_CODES.POWER_OFF_FUNCTION
 }
 
 function CECDevice(cec, device, address) {
@@ -90,7 +91,9 @@ CECDevice.prototype.sendOnce = function(key, cb) {
       cb(error);
       return;
     }
-    context.sendStop(key, cb);
+    setTimeout(function() {
+      context.sendStop(key, cb);
+    }, 100);
   });
 }
 
@@ -99,12 +102,12 @@ function formatHex(num) {
 }
 
 CECDevice.prototype.sendStart = function(key, cb) {
-  var down = buildCode(44, formatHex(KEYS[key]));
+  var code = this.buildCode(44, formatHex(KEYS[key]));
   this.cec.send(code, cb)
 }
 
 CECDevice.prototype.sendStop = function(key, cb) {
-  var down = buildCode(45);
+  var code = this.buildCode(45);
   this.cec.send(code, cb)
 }
 

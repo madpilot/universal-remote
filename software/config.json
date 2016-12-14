@@ -23,7 +23,7 @@
       "config": {
         "devices": [
           { "name": "tv", "address": 0 },
-          { "name": "receiver", "address": 3 }
+          { "name": "receiver", "address": 5 }
         ]
       }
     }
