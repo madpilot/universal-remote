@@ -59,8 +59,8 @@ HttpInput.prototype.listen = function(handler) {
     });
   });
 
-  app.put("/start/:device/:key", function(req, res) {
-    handler(req.params.device, "sendStart", req.params.key, function(error, success) {
+  app.put("/start/:device", function(req, res) {
+    handler(req.params.device, "sendStart", req.body.key, function(error, success) {
       setHeaders(res);
       if(error != null) {
         returnError(req, res, error);
@@ -70,8 +70,8 @@ HttpInput.prototype.listen = function(handler) {
     });
   });
 
-  app.put("/stop/:device/:key", function(req, res) {
-    handler(req.params.device, "sendStop", req.params.key, function(error, success) {
+  app.put("/stop/:device", function(req, res) {
+    handler(req.params.device, "sendStop", req.body.key, function(error, success) {
      setHeaders(res);
       if(error != null) {
         returnError(req, res, error);

@@ -17,6 +17,21 @@
       "config": {
         "discover": true
       }
+    },
+    {
+      "driver": "cec",
+      "config": {
+        "devices": [
+          { "name": "tv", "address": 0 },
+          {
+            "name": "receiver",
+            "address": 5,
+            "overrides": {
+              "KEY_AV1": "custom/yamaha-hacks.js"
+            }
+          }
+        ]
+      }
     }
   ]
 }
