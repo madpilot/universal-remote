@@ -1,3 +1,4 @@
 /virtuals/*
 !/virtuals/.keep
+/custom
 /node_modules

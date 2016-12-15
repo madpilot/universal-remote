@@ -53,10 +53,15 @@ var KEYS = {
   KEY_STANDBY: USER_CONTROL_CODES.POWER_OFF_FUNCTION
 }
 
-function CECDevice(cec, device, address) {
+function CECDevice(cec, device, address, overrides) {
   this.cec = cec;
   this.source = 1;
   this.destination = address;
+  this.overrides = {};
+
+  for(var key in overrides) {
+    this.overrides[key] = require("../" + overrides[key]);
+  }
 }
 
 CECDevice.initialize = function(config, cb) {
@@ -65,7 +70,7 @@ CECDevice.initialize = function(config, cb) {
 
   for(var i = 0; i < config.devices.length; i++) {
     var device = config.devices[i];
-    var receiver = new CECDevice(cec, device.name, device.address);
+    var receiver = new CECDevice(cec, device.name, device.address, device.overrides);
     devices['cec-' + device.name] = receiver;
   }
 
@@ -81,6 +86,10 @@ CECDevice.prototype.list = function(callback) {
   for(var key in KEYS) {
     keys.push(key);
   }
+  for(var key in this.overrides) {
+    keys.push(key);
+  }
+
   callback(null, keys);
 }
 
@@ -102,8 +111,12 @@ function formatHex(num) {
 }
 
 CECDevice.prototype.sendStart = function(key, cb) {
-  var code = this.buildCode(44, formatHex(KEYS[key]));
-  this.cec.send(code, cb)
+  if(this.overrides[key]) {
+    this.overrides[key].call(this, key, cb);
+  } else {
+    var code = this.buildCode(44, formatHex(KEYS[key]));
+    this.cec.send(code, cb)
+  }
 }
 
 CECDevice.prototype.sendStop = function(key, cb) {
