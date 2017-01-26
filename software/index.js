@@ -6,7 +6,7 @@ var config = require(options.opt.config.name);
 
 if(config.logger) {
   logger.remove(logger.transports.Console);
-  
+
   for(var key in config.logger) {
     if(logger.transports[key]) {
       logger.add(logger.transports[key], config.logger[key])
@@ -15,6 +15,7 @@ if(config.logger) {
 }
 
 var deviceDrivers = {
+  dummy: require('./devices/dummy.js'),
   lirc: require('./devices/lirc.js'),
   cec: require('./devices/cec.js'),
   virtual: require('./devices/virtual.js')
@@ -33,6 +34,9 @@ for(var i = 0; i < config.devices.length; i++) {
   var driver = null;
 
   switch(device.driver) {
+    case "dummy":
+      driver = deviceDrivers.dummy;
+      break;
     case "lirc":
       driver = deviceDrivers.lirc;
       break;
