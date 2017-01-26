@@ -1,3 +1,4 @@
+config.json
 /virtuals/*
 !/virtuals/.keep
 /custom

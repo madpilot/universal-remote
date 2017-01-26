@@ -36,7 +36,7 @@ HttpInput.prototype.listen = function(handler) {
       }
     });
   });
-  
+
   app.get("/list/:device/", function(req, res) {
     handler(req.params.device, "list", null, function(error, keys) {
       setHeaders(res);
@@ -102,8 +102,6 @@ HttpInput.prototype.listen = function(handler) {
       }
     });
   });
-
-
 
   app.listen(this.port, function() {
     logger.info("[HTTP Input] Listening on " + context.bind + ":" + context.port);

@@ -2,6 +2,15 @@ var logger = require('winston');
 
 var config = require('./config.json');
 
+if(config.logger) {
+  logger.remove(logger.transports.Console);
+  for(var key in config.logger) {
+    if(logger.transports[key]) {
+      logger.add(logger.transports[key], config.logger[key])
+    }
+  }
+}
+
 var deviceDrivers = {
   lirc: require('./devices/lirc.js'),
   cec: require('./devices/cec.js'),
