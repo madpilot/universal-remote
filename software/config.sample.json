@@ -1,8 +1,16 @@
 {
-  "inputs": [
-    {
-      "driver": "lirc"
+  "logger": {
+    "Console": {
+      "level": "info",
+      "colorize": true
     },
+    "File": {
+      "level": "info",
+      "json": false,
+      "filename": "/var/log/ir-blaster.log"
+    }
+  },
+  "inputs": [
     {
       "driver": "http",
       "config": {
@@ -12,7 +20,7 @@
     }
   ],
   "devices": [
-    {
+		{
       "driver": "lirc",
       "config": {
         "discover": true
@@ -22,14 +30,7 @@
       "driver": "cec",
       "config": {
         "devices": [
-          { "name": "tv", "address": 0 },
-          {
-            "name": "receiver",
-            "address": 5,
-            "overrides": {
-              "KEY_AV1": "custom/yamaha-hacks.js"
-            }
-          }
+          { "name": "tv", "address": 0 }
         ]
       }
     }
