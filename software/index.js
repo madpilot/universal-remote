@@ -1,10 +1,12 @@
 #!/usr/bin/env node
+var path = require('path');
 var logger = require('winston');
-
-var config = require('./config.json');
+var options = require(path.dirname(__filename) + '/lib/parsing.js');
+var config = require(options.opt.config.name);
 
 if(config.logger) {
   logger.remove(logger.transports.Console);
+  
   for(var key in config.logger) {
     if(logger.transports[key]) {
       logger.add(logger.transports[key], config.logger[key])

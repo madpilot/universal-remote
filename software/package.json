@@ -21,6 +21,7 @@
     "cec_node": "git+https://git@github.com/madpilot/cec_node.git",
     "express": "^4.14.0",
     "lirc_node": "0.0.4",
+    "options-parser": "^0.4.0",
     "winston": "^2.3.0"
   }
 }
