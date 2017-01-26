@@ -1,8 +1,8 @@
 {
   "name": "universal-remote",
   "version": "0.0.1",
-  "description": "Universal Remote Control API for lircd",
-  "main": "index.js",
+  "description": "Universal Remote Control API with support for LIRC and CEC",
+  "bin": "./index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

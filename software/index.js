@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var logger = require('winston');
 
 var config = require('./config.json');
