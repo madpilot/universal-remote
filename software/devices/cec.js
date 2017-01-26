@@ -60,7 +60,7 @@ function CECDevice(cec, device, address, overrides) {
   this.overrides = {};
 
   for(var key in overrides) {
-    this.overrides[key] = require("../" + overrides[key]);
+    this.overrides[key] = require(overrides[key]);
   }
 }
 
