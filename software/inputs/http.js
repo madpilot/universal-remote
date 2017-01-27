@@ -12,6 +12,8 @@ function HttpInput(config) {
   this.config = config;
   this.bind = config.bind || "0.0.0.0";
   this.port = config.port || 80;
+
+  this.apiKey = config.apiKey;
 }
 
 function setHeaders(res) {
@@ -24,8 +26,27 @@ function returnError(req, res, error) {
   res.send(JSON.stringify({ error: error }));
 }
 
+function authenticate(config) {
+  return function(req, res, next) {
+    var authorization = req.get('Authorization');
+
+    if(authorization == "Bearer " + config.apiKey) {
+      next();
+    } else {
+      logger.error("[HTTP Input] Forbidden");
+      res.status(403);
+      res.send({ status: "Forbidden" });
+    }
+  }
+}
+
 HttpInput.prototype.listen = function(handler) {
   var context = this;
+
+  if(this.config.apiKey) {
+    app.use(authenticate(this.config));
+  }
+
   app.get("/devices", function(req, res) {
     handler(null, null, null, function(error, ids) {
       setHeaders(res);
