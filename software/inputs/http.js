@@ -1,6 +1,9 @@
 var logger = require('winston');
 var express = require('express')
 var bodyParser = require('body-parser');
+var http = require('http');
+var https = require('https');
+var fs = require('fs');
 
 var app = express();
 app.use(bodyParser.urlencoded({
@@ -11,9 +14,15 @@ app.use(bodyParser.json());
 function HttpInput(config) {
   this.config = config;
   this.bind = config.bind || "0.0.0.0";
-  this.port = config.port || 80;
 
   this.apiKey = config.apiKey;
+  this.ssl = config.ssl;
+
+  if(this.ssl) {
+    this.port = config.port || 443;
+  } else {
+    this.port = config.port || 80;
+  }
 }
 
 function setHeaders(res) {
@@ -124,7 +133,22 @@ HttpInput.prototype.listen = function(handler) {
     });
   });
 
-  app.listen(this.port, function() {
+  if(this.config.ssl) {
+    var cert = fs.readFileSync(this.config.ssl.cert, 'utf8');
+    var key  = fs.readFileSync(this.config.ssl.key, 'utf8');
+
+    var credentials = {
+      cert: cert,
+      key: key
+    };
+    logger.info("[HTTP Input] Using SSL");
+
+    var server = https.createServer(credentials, app);
+  } else {
+    var server = http.createServer(app);
+  }
+
+  server.listen(this.port, function() {
     logger.info("[HTTP Input] Listening on " + context.bind + ":" + context.port);
   });
 }
