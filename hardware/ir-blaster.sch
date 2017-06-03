@@ -1498,8 +1498,8 @@ Source: KYCON Sibalco USB vertical socket KUSBV.pdf</description>
 <instance part="U$1" gate="G$1" x="-7.62" y="78.74"/>
 <instance part="CN1" gate="G$1" x="88.9" y="83.82" rot="MR0"/>
 <instance part="LED_CONN" gate="-1" x="-76.2" y="119.38" rot="R180"/>
-<instance part="LED_CONN" gate="-2" x="-76.2" y="96.52" rot="R180"/>
-<instance part="LED_CONN" gate="-3" x="-76.2" y="83.82" rot="R180"/>
+<instance part="LED_CONN" gate="-2" x="-76.2" y="73.66" rot="R180"/>
+<instance part="LED_CONN" gate="-3" x="-76.2" y="104.14" rot="R180"/>
 <instance part="LED_CONN" gate="-4" x="-76.2" y="63.5" rot="R180"/>
 <instance part="X2" gate="G$1" x="-50.8" y="20.32" rot="MR0"/>
 <instance part="X1" gate="G$1" x="-35.56" y="20.32"/>
@@ -1586,15 +1586,24 @@ Source: KYCON Sibalco USB vertical socket KUSBV.pdf</description>
 <segment>
 <pinref part="LED_CONN" gate="-1" pin="1"/>
 <pinref part="R2" gate="G$1" pin="2"/>
-<wire x1="-71.12" y1="119.38" x2="-63.5" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="-71.12" y1="119.38" x2="-68.58" y2="119.38" width="0.1524" layer="91"/>
+<pinref part="LED_CONN" gate="-3" pin="1"/>
+<wire x1="-68.58" y1="119.38" x2="-63.5" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="-71.12" y1="104.14" x2="-68.58" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="-68.58" y1="104.14" x2="-68.58" y2="119.38" width="0.1524" layer="91"/>
+<junction x="-68.58" y="119.38"/>
 </segment>
 </net>
 <net name="N$2" class="0">
 <segment>
-<pinref part="LED_CONN" gate="-4" pin="1"/>
 <pinref part="Q1" gate="G$1" pin="C"/>
-<wire x1="-71.12" y1="63.5" x2="-60.96" y2="63.5" width="0.1524" layer="91"/>
+<pinref part="LED_CONN" gate="-2" pin="1"/>
+<wire x1="-71.12" y1="73.66" x2="-60.96" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="-60.96" y1="73.66" x2="-60.96" y2="63.5" width="0.1524" layer="91"/>
+<pinref part="LED_CONN" gate="-4" pin="1"/>
 <wire x1="-60.96" y1="63.5" x2="-60.96" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="-71.12" y1="63.5" x2="-60.96" y2="63.5" width="0.1524" layer="91"/>
+<junction x="-60.96" y="63.5"/>
 </segment>
 </net>
 <net name="N$3" class="0">
