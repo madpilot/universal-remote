@@ -9,7 +9,7 @@ defmodule UniversalRemote do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(UniversalRemote.Endpoint, []),
+      supervisor(UniversalRemote.Apis.Rest.Endpoint, []),
       # Start your own worker by calling: UniversalRemote.Worker.start_link(arg1, arg2, arg3)
       # worker(UniversalRemote.Worker, [arg1, arg2, arg3]),
     ]
@@ -23,7 +23,7 @@ defmodule UniversalRemote do
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
   def config_change(changed, _new, removed) do
-    UniversalRemote.Endpoint.config_change(changed, removed)
+    UniversalRemote.Apis.Rest.Endpoint.config_change(changed, removed)
     :ok
   end
 end

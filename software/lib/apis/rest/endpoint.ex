@@ -1,4 +1,4 @@
-defmodule UniversalRemote.Endpoint do
+defmodule UniversalRemote.Apis.Rest.Endpoint do
   use Phoenix.Endpoint, otp_app: :universal_remote
 
   socket "/socket", UniversalRemote.UserSocket
