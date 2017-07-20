@@ -81,12 +81,17 @@ defmodule CEC.Mapping.ControlCodes do
       f2: 0x72,
       f3: 0x73,
       f4: 0x74,
-      f5: 0x75
+      f5: 0x75,
+      data: 0x76
     ]
   end
 
   def control_to_code(control) do
     controls()[control]
+  end
+
+  def code_to_control(code) when code > 0xFF do
+    nil
   end
 
   def code_to_control(code) do
@@ -97,7 +102,7 @@ defmodule CEC.Mapping.ControlCodes do
     
     case result do
       [{control, _}] -> control
-            [] -> nil
+                  [] -> :reserved
     end
-  end
+  end  
 end
