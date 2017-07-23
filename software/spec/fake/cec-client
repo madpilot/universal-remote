@@ -1,0 +1,28 @@
+#!/bin/bash
+
+echo "log level set to 8"
+echo "No device type given. Using 'recording device'"
+echo "CEC Parser created - libCEC version 3.0.1"
+echo "no serial port given. trying autodetect:"
+echo " path:     Raspberry Pi"
+echo "  com port: RPI"
+echo ""
+echo "  opening a connection to the CEC adapter..."
+while :
+  echo "  TRAFFIC: [             111]  << e0"
+  echo "  TRAFFIC: [             172]  << e0:8c"
+  echo "  TRAFFIC: [             360]  >> 0f:87:00:00:f0"
+  echo "  TRAFFIC: [             365]  << 11"
+  echo "  TRAFFIC: [             639]  << 11"
+  echo "  TRAFFIC: [             913]  << 1f:84:34:00:01"
+  echo "  TRAFFIC: [            1068]  << 10:47:43:45:43:54:65:73:74:65:72"
+  echo "  TRAFFIC: [            1372]  << 10:8f"
+  echo "  TRAFFIC: [            1517]  >> 01:90:00"
+  echo "  waiting for input"
+
+do
+  read input
+  echo $input >> /tmp/fake-cec
+  echo "  TRAFFIC: [            1892] << $input"
+  echo "  TRAFFIC: [            1900] >> 10:8f"
+done
