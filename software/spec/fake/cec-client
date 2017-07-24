@@ -22,7 +22,5 @@ while :
 
 do
   read input
-  echo $input >> /tmp/fake-cec
-  echo "  TRAFFIC: [            1892] << $input"
   echo "  TRAFFIC: [            1900] >> 10:8f"
 done

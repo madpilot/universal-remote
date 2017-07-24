@@ -8,6 +8,7 @@ defmodule CEC.Supervisor do
   def init(state) do
     children = [
       worker(CEC.Producer, []),
+      worker(CEC.Consumer, []),
       worker(CEC.Process, [])
     ]
     supervise(children, strategy: :one_for_one)

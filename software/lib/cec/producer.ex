@@ -2,11 +2,12 @@ defmodule CEC.Producer do
   use GenStage
 
   def start_link() do
-    GenStage.start_link(__MODULE__, [], [name: __MODULE__])
+    queue = :queue.from_list([])
+    GenStage.start_link(__MODULE__, queue, [name: __MODULE__])
   end
 
-  def init(events) do
-    {:producer, %{events: events}}
+  def init(queue) do
+    {:producer, {:queue.new, 0}, dispatcher: GenStage.BroadcastDispatcher}
   end
 
   defp parse_line(data) do
@@ -16,17 +17,25 @@ defmodule CEC.Producer do
     end
   end
 
-  def handle_demand(demand, %{events: events}) when demand > 0 do
-    {:noreply, events, demand + 1}
+  defp dispatch_events(queue, demand, events) do
+    with l when l > 0 <- :queue.len(queue),
+         d when d > 0 <- demand,
+         {{:value, event}, queue} = :queue.out(queue)
+    do
+      dispatch_events(queue, demand - 1, [event | events])
+    else
+      _ -> {:noreply, Enum.reverse(events), {queue, demand}}
+    end
   end
 
-  def handle_cast({:cec, line}, state) do
-    data = line
-           |> parse_line
+  def handle_demand(incoming_demand, {queue, demand}) do
+    dispatch_events(queue, incoming_demand + demand, [])
+  end
 
-    case data do
-      nil -> {:noreply, [], state}
-      code -> {:noreply, [code], state}
+  def handle_cast({:cec, line}, {queue, demand}) do
+    case line |> parse_line do
+       nil -> dispatch_events(queue, demand, [])
+      code -> dispatch_events(:queue.in(code, queue), demand, [])
     end
   end
 end
