@@ -2,7 +2,7 @@ defmodule CEC.Producer do
   use GenStage
 
   def start_link() do
-    GenStage.start_link(__MODULE__, [])
+    GenStage.start_link(__MODULE__, [], [name: __MODULE__])
   end
 
   def init(events) do
@@ -12,21 +12,21 @@ defmodule CEC.Producer do
   defp parse_line(data) do
     case Regex.run(~r/\s*TRAFFIC:\s+\[.+\]\s+(<<|>>)\s(.+)$/, data) do
       [_, _, code] -> code
-                 _ -> ""
+                 _ -> nil
     end
   end
 
   def handle_demand(demand, %{events: events}) when demand > 0 do
-    events |> IO.inspect
-    {:noreply, ["Hi"], demand + 1}
+    {:noreply, events, demand + 1}
   end
 
-  def handle_info({_, {:data, {:eol, msg}} }, state) do
-    case msg |> parse_line do
-        "" -> nil
-      code -> IO.puts code
-    end
+  def handle_cast({:cec, line}, state) do
+    data = line
+           |> parse_line
 
-    {:noreply, [], state}
+    case data do
+      nil -> {:noreply, [], state}
+      code -> {:noreply, [code], state}
+    end
   end
 end
