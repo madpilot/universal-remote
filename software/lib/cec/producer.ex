@@ -2,11 +2,10 @@ defmodule CEC.Producer do
   use GenStage
 
   def start_link() do
-    queue = :queue.from_list([])
-    GenStage.start_link(__MODULE__, queue, [name: __MODULE__])
+    GenStage.start_link(__MODULE__, :ok, [name: __MODULE__])
   end
 
-  def init(queue) do
+  def init(:ok) do
     {:producer, {:queue.new, 0}, dispatcher: GenStage.BroadcastDispatcher}
   end
 
