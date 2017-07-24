@@ -6,6 +6,9 @@ use Mix.Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
+config :universal_remote, CEC.Process,
+  executable: Path.expand("#{__DIR__}/../spec/fake/cec-client")
+
 config :universal_remote, UniversalRemote.Endpoint,
   http: [port: 4000],
   debug_errors: true,

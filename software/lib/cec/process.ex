@@ -6,7 +6,8 @@ defmodule CEC.Process do
   end
 
   def init(state) do
-    port = Port.open({:spawn_executable, "/Users/myles/Projects/ir-blaster/software/spec/fake/cec-client"}, [:line, :binary])
+    [executable: executable] = Application.get_env(:universal_remote, CEC.Process)
+    port = Port.open({:spawn_executable, executable}, [:line, :binary])
     {:ok, state |> Map.merge(%{port: port})}
   end
 

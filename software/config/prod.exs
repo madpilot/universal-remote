@@ -1,5 +1,7 @@
 use Mix.Config
 
+config :universal_remote, CEC.Process,
+  executable: Path.expand("/usr/bin/cec-client")
 # For production, we configure the host to read the PORT
 # from the system environment. Therefore, you will need
 # to set PORT=80 before running your server.
