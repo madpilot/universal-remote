@@ -47,21 +47,19 @@ defmodule CEC do
     ints ++ tail
   end
 
-  defp prepare_arguments(tail, args) when is_binary(args) do
+  defp prepare_argument(tail, arg) when is_binary(arg) do
     cond do
-      String.match?(args, ~r/(\d)\.(\d)\.(\d)\.(\d)/)  -> prepare_address(tail, String.split(args, "."))
-                                                  args -> prepare_charlist(tail, String.to_charlist(args))
+      String.match?(arg, ~r/(\d)\.(\d)\.(\d)\.(\d)/)  -> prepare_address(tail, String.split(arg, "."))
+                                                  arg -> prepare_charlist(tail, String.to_charlist(arg))
     end
   end
 
-  def code(sender, receiver, command) do
-    []
-    |> prepare_command(command)
-    |> prepare_devices(sender, receiver)
-    |> prepare_code
+  defp prepare_arguments(tail, args) do
+    args
+    |> Enum.reduce(tail, fn(arg, tail) -> prepare_argument(tail, arg) end)
   end
 
-  def code(sender, receiver, command, args) do
+  def code(sender, receiver, command, args \\ []) do
     []
     |> prepare_arguments(args)
     |> prepare_command(command)
@@ -69,13 +67,7 @@ defmodule CEC do
     |> prepare_code
   end
 
-  def send(sender, receiver, command) do
-    sender
-    |> code(receiver, command)
-    |> CEC.Process.send_code
-  end
-
-  def send(sender, receiver, command, args) do
+  def send(sender, receiver, command, args \\ []) do
     sender
     |> code(receiver, command, args)
     |> CEC.Process.send_code
