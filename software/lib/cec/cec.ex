@@ -47,11 +47,24 @@ defmodule CEC do
     ints ++ tail
   end
 
+  def prepare_integer(tail, integer) do
+    head = integer
+    |> Integer.to_string(16)
+    |> String.rjust(2, ?0)
+
+    [head | tail]
+  end
+
   defp prepare_argument(tail, arg) when is_binary(arg) do
     cond do
       String.match?(arg, ~r/(\d)\.(\d)\.(\d)\.(\d)/)  -> prepare_address(tail, String.split(arg, "."))
                                                   arg -> prepare_charlist(tail, String.to_charlist(arg))
     end
+  end
+
+  defp prepare_argument(tail, arg) when is_integer(arg) do
+    tail
+    |> prepare_integer(arg)
   end
 
   defp prepare_arguments(tail, args) do
