@@ -38,7 +38,7 @@ defmodule UniversalRemote.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
 
-     {:apex, "~>1.0.0", only: :dev},
+     {:apex, "~>1.0.0", only: [:dev,:test]},
 
      {:espec, "~> 1.4.1", only: :test}]
   end
