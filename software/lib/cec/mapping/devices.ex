@@ -19,7 +19,7 @@ defmodule CEC.Mapping.Devices do
       reserved_d: 0xD,
       reserved_e: 0xE,
       broadcast: 0xF,
-      undefined: 0xF
+      unregistered: 0xF
     ]
   end
 

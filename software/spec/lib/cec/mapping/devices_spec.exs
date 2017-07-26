@@ -63,8 +63,12 @@ defmodule CEC.Mapping.DevicesSpec do
       expect(Devices.devices[:reserved_e]) |> to(eq(0xE))
     end
 
-    it "maps braodcast" do
+    it "maps broadcast" do
       expect(Devices.devices[:broadcast]) |> to(eq(0xF))
+    end
+
+    it "maps unregistered" do
+      expect(Devices.devices[:unregistered]) |> to(eq(0xF))
     end
   end
 
