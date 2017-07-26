@@ -6,7 +6,7 @@ defmodule CEC.Mapping.ControlCodesSpec do
     it "maps select" do
       expect(ControlCodes.controls[:select]) |> to(eq(0x00))
     end
-    
+
     it "maps up" do
       expect(ControlCodes.controls[:up]) |> to(eq(0x01))
     end
@@ -326,26 +326,26 @@ defmodule CEC.Mapping.ControlCodesSpec do
     it "maps f5" do
       expect(ControlCodes.controls[:f5]) |> to(eq(0x75))
     end
-    
+
     it "maps data" do
       expect(ControlCodes.controls[:data]) |> to(eq(0x76))
     end
   end
 
-  describe("control_to_code") do
+  describe("to_code") do
     it "maps the control name to the relevant code" do
-      expect(ControlCodes.control_to_code(:select)) |> to(eq(0x00))
+      expect(ControlCodes.to_code(:select)) |> to(eq(0x00))
     end
   end
 
-  describe("code_to_control") do
+  describe("from_code") do
     it "maps the code to the control name" do
-      expect(ControlCodes.code_to_control(0x00)) |> to(eq(:select))
+      expect(ControlCodes.from_code(0x00)) |> to(eq(:select))
     end
-    
+
     it "maps :reserved codes" do
       test_func = fn(code) ->
-        expect(ControlCodes.code_to_control(code)) |> to(eq(:reserved))
+        expect(ControlCodes.from_code(code)) |> to(eq(:reserved))
       end
 
       0x0E..0x1F |> Enum.each(test_func)
@@ -357,7 +357,7 @@ defmodule CEC.Mapping.ControlCodesSpec do
     end
 
     it "maps to nil of the code doesn't exist" do
-      expect(ControlCodes.code_to_control(0x100)) |> to(eq(nil))
+      expect(ControlCodes.from_code(0x100)) |> to(eq(nil))
     end
   end
 end

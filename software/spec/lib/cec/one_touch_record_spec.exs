@@ -42,6 +42,10 @@ defmodule CEC.OneTouchRecordSpec do
         assert_receive("01:0A:04")
       end
     end
+
+    describe "errors" do
+
+    end
   end
 
   describe "record_tv_screen" do

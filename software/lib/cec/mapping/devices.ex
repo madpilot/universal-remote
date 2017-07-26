@@ -1,4 +1,6 @@
 defmodule CEC.Mapping.Devices do
+  alias CEC.Mapping.Mapper
+
   def devices do
     [
       tv: 0x0,
@@ -21,19 +23,13 @@ defmodule CEC.Mapping.Devices do
     ]
   end
 
-  def device_to_code(device) do
-    devices()[device]
+  def to_code(control) do
+    devices()
+    |> Mapper.to_code(control)
   end
 
-  def code_to_device(code) do
-    result = for device <- devices(),
-        fn(device, code) -> device
-                            |> elem(1) == code
-        end.(device, code), do: device
-
-    case result do
-      [{device, _}] -> device
-            [] -> nil
-    end
+  def from_code(code) do
+    devices()
+    |> Mapper.from_code(code)
   end
 end

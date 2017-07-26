@@ -13,7 +13,7 @@ defmodule CEC do
   end
 
   defp prepare_devices(tail, sender, receiver) do
-    address = [ Devices.device_to_code(sender), Devices.device_to_code(receiver) ]
+    address = [ Devices.to_code(sender), Devices.to_code(receiver) ]
     |> hex_elements
     |> Enum.join("")
 

@@ -1,4 +1,6 @@
 defmodule CEC.Mapping.ControlCodes do
+  alias CEC.Mapping.Mapper
+
   def controls do
     [
       select: 0x00,
@@ -86,23 +88,19 @@ defmodule CEC.Mapping.ControlCodes do
     ]
   end
 
-  def control_to_code(control) do
-    controls()[control]
+  def to_code(control) do
+    controls()
+    |> Mapper.to_code(control)
   end
 
-  def code_to_control(code) when code > 0xFF do
+  def from_code(code) when code > 0xFF do
     nil
   end
 
-  def code_to_control(code) do
-    result = for control <- controls(), 
-        fn(control, code) -> control 
-                            |> elem(1) == code
-        end.(control, code), do: control
-    
-    case result do
-      [{control, _}] -> control
-                  [] -> :reserved
+  def from_code(code) do
+    case controls() |> Mapper.from_code(code) do
+       nil -> :reserved
+      code -> code
     end
-  end  
+  end
 end

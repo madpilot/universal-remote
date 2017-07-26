@@ -68,19 +68,19 @@ defmodule CEC.Mapping.DevicesSpec do
     end
   end
 
-  describe("device_to_code") do
+  describe("to_code") do
     it "maps the device name to the relevant code" do
-      expect(Devices.device_to_code(:tv)) |> to(eq(0x0))
+      expect(Devices.to_code(:tv)) |> to(eq(0x0))
     end
   end
 
-  describe("code_to_device") do
+  describe("from_code") do
     it "maps the code to the device name" do
-      expect(Devices.code_to_device(0x0)) |> to(eq(:tv))
+      expect(Devices.from_code(0x0)) |> to(eq(:tv))
     end
 
     it "maps to nil of the code doesn't exist" do
-      expect(Devices.code_to_device(0x100)) |> to(eq(nil))
+      expect(Devices.from_code(0x100)) |> to(eq(nil))
     end
   end
 end

@@ -20,19 +20,19 @@ defmodule CEC.Mapping.SourcesSpec do
     end
   end
 
-  describe("source_to_code") do
+  describe("to_code") do
     it "maps the source name to the relevant code" do
-      expect(Sources.source_to_code(:digital)) |> to(eq(0x2))
+      expect(Sources.to_code(:digital)) |> to(eq(0x2))
     end
   end
 
-  describe("code_to_source") do
+  describe("from_code") do
     it "maps the code to the source name" do
-      expect(Sources.code_to_source(0x2)) |> to(eq(:digital))
+      expect(Sources.from_code(0x2)) |> to(eq(:digital))
     end
 
     it "maps to nil of the source doesn't exist" do
-      expect(Sources.code_to_source(0x100)) |> to(eq(nil))
+      expect(Sources.from_code(0x100)) |> to(eq(nil))
     end
   end
 end
