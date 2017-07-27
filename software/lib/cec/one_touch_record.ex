@@ -1,6 +1,10 @@
 defmodule CEC.OneTouchRecord do
   alias CEC.Mapping.{Sources,RecordErrors}
 
+  def record_on(source, destination, record_source) do
+    CEC.send(source, destination, 0x09, [Sources.to_code(record_source)])
+  end
+
   def record_off(source, destination) do
     CEC.send(source, destination, 0x0b)
   end

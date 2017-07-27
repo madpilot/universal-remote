@@ -11,7 +11,10 @@ defmodule CEC.OneTouchRecordSpec do
   end
 
   describe "record_on" do
-    it "receives the correct code"
+    it "receives the correct code" do
+      CEC.OneTouchRecord.record_on(:tv, :recording_1, :analogue)
+      assert_receive("01:09:03")
+    end
   end
 
   describe "record_status" do
@@ -41,10 +44,6 @@ defmodule CEC.OneTouchRecordSpec do
         CEC.OneTouchRecord.record_status(:tv, :recording_1, :external)
         assert_receive("01:0A:04")
       end
-    end
-
-    describe "errors" do
-
     end
   end
 
