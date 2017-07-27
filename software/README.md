@@ -30,42 +30,51 @@ Now, I can set the active source to a HDMI address, but it means I can change to
 The custom module might look like this
 
 ```elixir
-defmodule CEC.Receiver do
-  defp send_code(code)
-    CEC.send(:unregistered, :audio_system, code)
+defmodule Device.Receiver do
+  def power_on(stage) do
+    stage
+    |> CEC.SystemAudioControl(user_pressed, :recording_1, :audio_system, :power_on)
   end
 
-  def power_on do
-    CEC.send(:recording_1, :audio_system, :user_control_pressed, :power_on)
+  def hdmi1(stage) do
+    stage
+    |> CEC.OneTouchPlay.active_source(:recording_1, :audio_system, CEC.address(cec, Device.AppleTV))
+    |> wait(source: :audio_system, code: :active_source, address: CEC.address(cec, Device.AppleTV))
   end
 
-  def hdmi1 do
-    CEC.send(:recording_1, :broadcast, :active_source, "3.1.0.0")
+  def hdmi4(stage) do
+    stage
+    |> CEC.OneTouchPlay.active_source(:recording_1, :audio_system, CEC.address(cec, Device.Satellite))
+    |> wait(source: :audio_system, code: :active_source, address: CEC.address(cec, Device.Satellite))
   end
 
-  def hdmi4 do
-    CEC.send(:recording_1, :broadcast, :active_source, "3.4.0.0")
-  end
-
-  def input_change do
-    CEC.send(:recording_1, :audio_system, :user_control_pressed, :select_av_function)
+  def input_change(stage) do
+    stage
+    |> CEC.SystemAudioControl.user_pressed(:recording_1, :audio_system, :select_av_function)
     |> wait(100)
-    |> CEC.send(:recording_1, :audio_system, :user_control_released)
+    |> CEC.SystemAudioControl.user_released(:recording_1, :audio_system)
   end
 
-  def av4 do
-    CEC.Receiver.send(:hdmi4)
-    |> wait(1000)
-    |> CEC.Receiver.send(:input_change)
+  def av1(stage) do
+    stage
+    |> LIRC.Receiver.av1
+  end
+
+  def av4(stage) do
+    stage
+    |> CEC.Receiver.hdmi4
+    |> CEC.Receiver.input_change
     |> wait(100)
-    |> CEC.Receiver.send(:input_change)
+    |> CEC.Receiver.input_change
     |> wait(100)
-    |> CEC.Receiver.send(:input_change)
+    |> CEC.Receiver.input_change
     |> wait(100)
   end
 end
 
-CEC.register("3.4.0.0", :audio_system, CEC.Receiver)
+CEC.register("3.4.0.0", :audio_system, Device.Receiver)
+CEC.register("3.4.0.1", :playback_1, Device.AppleTV)
+CEC.register("3.4.0.4", [:tuner_1, :recording_1], Device.Satellite)
 ```
 
 By chaining commands together, we get a pipeline effect, and using the wait commands means we can let the hardware catch up.
