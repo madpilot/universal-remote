@@ -1,5 +1,5 @@
 defmodule CEC.DeviceMenuControl do
-  alias CEC.Mapping.RemoteControlPassthrough
+  alias CEC.RemoteControlPassthrough
   alias CEC.Mapping.MenuRequest
   alias CEC.Mapping.MenuStatus
 
