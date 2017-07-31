@@ -70,7 +70,7 @@ defmodule CEC.SystemInformationSpec do
 
   describe "report_phsyical_address" do
     it "receives the correct code" do
-      CEC.SystemInformation.report_phsyical_address(:tuner_2, :audio_system, "3.1.0.0", 0x1)
+      CEC.SystemInformation.report_phsyical_address(:tuner_2, :audio_system, "3.1.0.0", :recording)
       assert_receive("65:84:31:00:01")
     end
   end

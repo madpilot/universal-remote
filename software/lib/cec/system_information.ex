@@ -1,5 +1,5 @@
 defmodule CEC.SystemInformation do
-  alias CEC.Mapping.Versions
+  alias CEC.Mapping.{Versions,Devices}
 
   def cec_version(source, destination, version) do
     CEC.send(source, destination, 0x9e, [Versions.to_code(version)])
@@ -22,7 +22,7 @@ defmodule CEC.SystemInformation do
   end
 
   def report_phsyical_address(source, destination, address, type) do
-    CEC.send(source, destination, 0x84, [address, type])
+    CEC.send(source, destination, 0x84, [address, Devices.to_code(type)])
   end
 
   def set_menu_language(source, destination, language) do

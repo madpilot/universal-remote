@@ -19,7 +19,12 @@ defmodule CEC.Mapping.Devices do
       reserved_d: 0xD,
       reserved_e: 0xE,
       broadcast: 0xF,
-      unregistered: 0xF
+      unregistered: 0xF,
+
+      recording: 0x1,
+      reserved: 0x2,
+      tuner: 0x3,
+      playback: 0x4
     ]
   end
 
