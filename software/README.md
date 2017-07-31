@@ -31,44 +31,39 @@ The custom module might look like this
 
 ```elixir
 defmodule Device.Receiver do
-  def power_on(stage) do
-    stage
-    |> CEC.SystemAudioControl(user_pressed, :recording_1, :audio_system, :power_on)
+  def power_on do
+    CEC.SystemAudioControl(user_pressed, :recording_1, :audio_system, :power_on)
   end
 
-  def hdmi1(stage) do
-    stage
-    |> CEC.OneTouchPlay.active_source(:recording_1, :audio_system, CEC.address(cec, Device.AppleTV))
-    |> wait(source: :audio_system, code: :active_source, address: CEC.address(cec, Device.AppleTV))
+  def hdmi1 do
+    CEC.OneTouchPlay.active_source(:recording_1, :audio_system, CEC.address(cec, Device.AppleTV))
+    wait(source: :audio_system, code: :active_source, address: CEC.address(cec, Device.AppleTV))
   end
 
-  def hdmi4(stage) do
-    stage
-    |> CEC.OneTouchPlay.active_source(:recording_1, :audio_system, CEC.address(cec, Device.Satellite))
-    |> wait(source: :audio_system, code: :active_source, address: CEC.address(cec, Device.Satellite))
+  def hdmi4 do
+    CEC.OneTouchPlay.active_source(:recording_1, :audio_system, CEC.address(cec, Device.Satellite))
+    CEC.wait(source: :audio_system, code: :active_source, address: CEC.address(cec, Device.Satellite))
   end
 
-  def input_change(stage) do
-    stage
-    |> CEC.SystemAudioControl.user_pressed(:recording_1, :audio_system, :select_av_function)
-    |> wait(100)
-    |> CEC.SystemAudioControl.user_released(:recording_1, :audio_system)
+  def input_change do
+    CEC.SystemAudioControl.user_pressed(:recording_1, :audio_system, :select_av_function)
+    CEC.wait(100)
+    CEC.SystemAudioControl.user_released(:recording_1, :audio_system)
   end
 
-  def av1(stage) do
-    stage
-    |> LIRC.Receiver.av1
+  def av1 do
+    CEC.Receiver.hdmi4
+    CEC.Receiver.input_change
   end
 
-  def av4(stage) do
-    stage
-    |> CEC.Receiver.hdmi4
-    |> CEC.Receiver.input_change
-    |> wait(100)
-    |> CEC.Receiver.input_change
-    |> wait(100)
-    |> CEC.Receiver.input_change
-    |> wait(100)
+  def av4 do
+    CEC.Receiver.hdmi4
+    CEC.Receiver.input_change
+    wait(100)
+    CEC.Receiver.input_change
+    wait(100)
+    CEC.Receiver.input_change
+    wait(100)
   end
 end
 
@@ -76,8 +71,6 @@ CEC.register("3.4.0.0", :audio_system, Device.Receiver)
 CEC.register("3.4.0.1", :playback_1, Device.AppleTV)
 CEC.register("3.4.0.4", [:tuner_1, :recording_1], Device.Satellite)
 ```
-
-By chaining commands together, we get a pipeline effect, and using the wait commands means we can let the hardware catch up.
 
 The last line tells the CEC listener that device at node 3.4.0.0 is the audio system (device id 44) and is defined by our CEC.Receiver module
 

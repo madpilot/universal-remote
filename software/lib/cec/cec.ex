@@ -69,6 +69,7 @@ defmodule CEC do
 
   defp prepare_arguments(tail, args) do
     args
+    |> Enum.reverse
     |> Enum.reduce(tail, fn(arg, tail) -> prepare_argument(tail, arg) end)
   end
 
@@ -80,9 +81,21 @@ defmodule CEC do
     |> prepare_code
   end
 
+  def code(sender, receiver) do
+    []
+    |> prepare_devices(sender, receiver)
+    |> prepare_code
+  end
+
   def send(sender, receiver, command, args \\ []) do
     sender
     |> code(receiver, command, args)
+    |> CEC.Process.send_code
+  end
+
+  def send(sender, receiver) do
+    sender
+    |> code(receiver)
     |> CEC.Process.send_code
   end
 end
