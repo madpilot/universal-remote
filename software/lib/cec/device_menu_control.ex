@@ -1,4 +1,5 @@
 defmodule CEC.DeviceMenuControl do
+  alias CEC.Mapping.OpCodes
   alias CEC.RemoteControlPassthrough
   alias CEC.Mapping.MenuRequest
   alias CEC.Mapping.MenuStatus
@@ -12,10 +13,10 @@ defmodule CEC.DeviceMenuControl do
   end
 
   def menu_response(source, destination, type) do
-    CEC.send(source, destination, 0x8d, [MenuRequest.to_code(type)])
+    CEC.send(source, destination, OpCodes.to_code(:menu_response), [MenuRequest.to_code(type)])
   end
 
   def menu_status(source, destination, state) do
-    CEC.send(source, destination, 0x8e, [MenuStatus.to_code(state)])
+    CEC.send(source, destination, OpCodes.to_code(:menu_status), [MenuStatus.to_code(state)])
   end
 end
