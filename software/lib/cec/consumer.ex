@@ -11,7 +11,7 @@ defmodule CEC.Consumer do
 
   def handle_events(events, _from, state) do
     events
-    |> Enum.each(fn(ev) -> IO.puts ev end)
+    |> Enum.each(fn(ev) -> ev |> Apex.ap end)
     {:noreply, [], state}
   end
 end

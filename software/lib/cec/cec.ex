@@ -1,5 +1,5 @@
 defmodule CEC do
-  alias CEC.Mapping.Devices
+  alias CEC.Mapping.{Source, Destination}
   use Bitwise, only_operators: true
 
   defp hex_elements(list) do
@@ -13,7 +13,7 @@ defmodule CEC do
   end
 
   defp prepare_devices(tail, sender, receiver) do
-    address = [ Devices.to_code(sender), Devices.to_code(receiver) ]
+    address = [ Source.to_code(sender), Destination.to_code(receiver) ]
     |> hex_elements
     |> Enum.join("")
 

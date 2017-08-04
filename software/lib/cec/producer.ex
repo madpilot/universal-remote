@@ -9,9 +9,13 @@ defmodule CEC.Producer do
     {:producer, {:queue.new, 0}, dispatcher: GenStage.BroadcastDispatcher}
   end
 
+  defp map_code(code) do
+    CEC.Mapping.Parser.from_code(code)
+  end
+
   defp parse_line(data) do
     case Regex.run(~r/\s*TRAFFIC:\s+\[.+\]\s+(<<|>>)\s(.+)$/, data) do
-      [_, _, code] -> code
+      [_, _, code] -> code |> map_code
                  _ -> nil
     end
   end
