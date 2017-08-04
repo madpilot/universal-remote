@@ -24,7 +24,7 @@ defmodule CEC.Mapping.Parser do
   def map_elements(%{devices: devices, opcode: opcode}) do
     %{devices: devices}
     |> map_elements()
-    |> Map.merge(%{opcode: map_opcode(opcode)})
+    |> Map.merge(%{command: map_opcode(opcode)})
   end
 
   def map_elements(%{devices: devices}) do
