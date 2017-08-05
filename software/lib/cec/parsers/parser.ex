@@ -31,6 +31,7 @@ defmodule CEC.Parsers.Parser do
       :menu_request -> %{type: CEC.Parsers.DeviceMenuControl.menu_request(arguments)}
       :report_physical_address -> CEC.Parsers.SystemInformation.report_physical_address(arguments)
       :report_audio_status -> CEC.Parsers.SystemAudioControl.give_audio_status(arguments)
+      :report_power_status -> %{status: CEC.Parsers.DevicePowerStatus.report_power_status(arguments)}
       :routing_change -> CEC.Parsers.SystemInformation.routing_change(arguments)
       :routing_information -> %{address: Arguments.to_address(arguments)}
       :set_osd_name -> %{value: Arguments.to_ascii(arguments)}

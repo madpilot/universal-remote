@@ -157,6 +157,12 @@ defmodule CEC.Parsers.ParserSpec do
     end
   end
 
+  describe "report_power_status" do
+    it "parses message" do
+      expect(Parser.from_code("12:90:01")) |> to(eq %{source: :recording_1, destination: :recording_2, command: :report_power_status, status: :standby})
+    end
+  end
+
   describe "request_active_source" do
     it "parses message" do
       expect(Parser.from_code("6F:85")) |> to(eq %{source: :tuner_2, destination: :broadcast, command: :request_active_source})
