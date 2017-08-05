@@ -10,7 +10,7 @@ defmodule CEC.Producer do
   end
 
   defp map_code(code) do
-    CEC.Mapping.Parser.from_code(code)
+    CEC.Parsers.Parser.from_code(code)
   end
 
   defp parse_line(data) do

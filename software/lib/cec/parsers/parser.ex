@@ -1,6 +1,8 @@
-defmodule CEC.Mapping.Parser do
-  alias CEC.Mapping.{Source, Destination, OpCodes, Arguments}
+defmodule CEC.Parsers.Parser do
+  alias CEC.Mapping.{Source, Destination, OpCodes}
   alias CEC.Mapping.{DeckStatus, DeckStatusRequest}
+  alias CEC.Parsers.{Arguments}
+
   use Bitwise, only_operators: true
 
   def map_devices(devices) do
@@ -18,9 +20,12 @@ defmodule CEC.Mapping.Parser do
 
   def map_arguments(opcode, arguments) do
     case opcode |> map_opcode do
+      :active_source -> %{address: Arguments.to_address(arguments)}
+      :cec_version -> %{version: CEC.Parsers.Version.version(arguments)}
       :deck_status -> %{status: arguments |> List.first |> DeckStatus.from_code}
-      :give_deck_status -> %{status: arguments |> List.first |> DeckStatusRequest.from_code}
       :device_vendor_id -> %{vendor: Arguments.to_vendor(arguments)}
+      :feature_abort -> CEC.Parsers.Abort.feature_abort(arguments)
+      :give_deck_status -> %{status: arguments |> List.first |> DeckStatusRequest.from_code}
       :set_osd_name -> %{value: Arguments.to_ascii(arguments)}
 
 
@@ -54,7 +59,6 @@ defmodule CEC.Mapping.Parser do
 
   def from_code(code) do
     code
-    |> Apex.ap
     |> String.trim
     |> String.split(":")
     |> process

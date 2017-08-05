@@ -1,5 +1,6 @@
-defmodule CEC.Mapping.Arguments do
+defmodule CEC.Parsers.Arguments do
   alias CEC.Mapping.Vendor
+  alias CEC.Mapping.AbortReasons
 
   def to_ascii(arguments) do
     arguments
@@ -9,6 +10,8 @@ defmodule CEC.Mapping.Arguments do
 
   def to_address(arguments) do
     arguments
+    |> Enum.join("")
+    |> String.split("", trim: true)
     |> Enum.join(".")
   end
 
