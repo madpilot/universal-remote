@@ -34,7 +34,9 @@ defmodule CEC.Parsers.Parser do
       :report_power_status -> %{status: CEC.Parsers.DevicePowerStatus.report_power_status(arguments)}
       :routing_change -> CEC.Parsers.SystemInformation.routing_change(arguments)
       :routing_information -> %{address: Arguments.to_address(arguments)}
+      :set_menu_language -> %{language: Arguments.to_ascii(arguments)}
       :set_osd_name -> %{value: Arguments.to_ascii(arguments)}
+      :set_stream_path -> %{address: Arguments.to_address(arguments)}
       :user_pressed -> %{key: CEC.Parsers.ControlCodes.user_pressed(arguments)}
       :vendor_command -> %{code: arguments |> Enum.join(":")}
       :vendor_remote_button_down -> %{code: arguments |> Enum.join(":")}

@@ -206,7 +206,9 @@ defmodule CEC.Parsers.ParserSpec do
   end
 
   describe "set_menu_language" do
-    it "parses message"
+    it "parses message" do
+      expect(Parser.from_code("0F:32:65:6E")) |> to(eq %{source: :tv, destination: :broadcast, command: :set_menu_language, language: "en"})
+    end
   end
 
   describe "set_osd_name" do
@@ -220,7 +222,9 @@ defmodule CEC.Parsers.ParserSpec do
   end
 
   describe "set_stream_path" do
-    it "parses message"
+    it "parses message" do
+      expect(Parser.from_code("0F:86:32:11")) |> to(eq %{source: :tv, destination: :broadcast, command: :set_stream_path, address: "3.2.1.1"})
+    end
   end
 
   describe "standby" do
