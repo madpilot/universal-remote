@@ -1,6 +1,5 @@
 defmodule CEC.Parsers.Parser do
   alias CEC.Mapping.{Source, Destination, OpCodes}
-  alias CEC.Mapping.{DeckStatus, DeckStatusRequest}
   alias CEC.Parsers.{Arguments}
 
   use Bitwise, only_operators: true
@@ -22,10 +21,15 @@ defmodule CEC.Parsers.Parser do
     case opcode |> map_opcode do
       :active_source -> %{address: Arguments.to_address(arguments)}
       :cec_version -> %{version: CEC.Parsers.Version.version(arguments)}
-      :deck_status -> %{status: arguments |> List.first |> DeckStatus.from_code}
+      :clear_analogur_timer -> raise "Not implemented"
+      :clear_digital_timer -> raise "Not implemented"
+      :clear_external_timer -> raise "Not implemented"
+      :deck_control -> %{mode: CEC.Parsers.DeckControl.deck_control(arguments)}
+      :deck_status -> %{status: CEC.Parsers.DeckControl.deck_status(arguments)}
       :device_vendor_id -> %{vendor: Arguments.to_vendor(arguments)}
       :feature_abort -> CEC.Parsers.Abort.feature_abort(arguments)
-      :give_deck_status -> %{status: arguments |> List.first |> DeckStatusRequest.from_code}
+      :give_deck_status -> %{status: CEC.Parsers.DeckControl.give_deck_status(arguments)}
+
       :set_osd_name -> %{value: Arguments.to_ascii(arguments)}
 
 

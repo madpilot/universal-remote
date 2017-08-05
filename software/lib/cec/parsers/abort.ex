@@ -3,7 +3,7 @@ defmodule CEC.Parsers.Abort do
 
   def feature_abort(arguments) do
     case arguments do
-      [opcode, reason] -> %{opcode: OpCodes.from_code(opcode), reason: AbortReasons.from_code(reason)}
+      [opcode, reason] -> %{op_code: OpCodes.from_code(opcode |> Integer.parse(16) |> elem(0)), reason: AbortReasons.from_code(reason |> Integer.parse(16) |> elem(0))}
     end
   end
 end
