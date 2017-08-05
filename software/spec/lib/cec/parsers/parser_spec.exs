@@ -204,7 +204,9 @@ defmodule CEC.Parsers.ParserSpec do
   end
 
   describe "set_osd_name" do
-    it "parses message"
+    it "parses message" do
+      expect(Parser.from_code("A0:47:4A:6F:68:6E:20:57:65:73:74")) |> to(eq %{source: :tuner_4, destination: :tv, command: :set_osd_name, value: "John West"})
+    end
   end
 
   describe "set_osd_string" do
@@ -216,7 +218,9 @@ defmodule CEC.Parsers.ParserSpec do
   end
 
   describe "standby" do
-    it "parses message"
+    it "parses message" do
+      expect(Parser.from_code("0F:36")) |> to(eq %{source: :tv, destination: :broadcast, command: :standby})
+    end
   end
 
   describe "system_audio_mode_request" do
@@ -228,7 +232,9 @@ defmodule CEC.Parsers.ParserSpec do
   end
 
   describe "text_view_on" do
-    it "parses message"
+    it "parses message" do
+      expect(Parser.from_code("20:0D")) |> to(eq %{source: :recording_2, destination: :tv, command: :text_view_on})
+    end
   end
 
   describe "timer_cleared_status" do
@@ -240,23 +246,29 @@ defmodule CEC.Parsers.ParserSpec do
   end
 
   describe "tuner_step_decrement" do
-    it "parses message"
+    it "parses message" do
+      expect(Parser.from_code("0F:06")) |> to(eq %{source: :tv, destination: :broadcast, command: :tuner_step_decrement})
+    end
   end
 
   describe "tuner_step_increment" do
-    it "parses message"
+    it "parses message" do
+      expect(Parser.from_code("0F:05")) |> to(eq %{source: :tv, destination: :broadcast, command: :tuner_step_increment})
+    end
   end
 
-  describe "user_control_pressed" do
-    it "parses message"
+  describe "user_pressed" do
+    expect(Parser.from_code("2F:44:0C")) |> to(eq %{source: :recording_2, destination: :broadcast, command: :user_pressed, key: :favourite_menu})
   end
 
-  describe "user_control_released" do
-    it "parses message"
+  describe "user_released" do
+    expect(Parser.from_code("2F:45")) |> to(eq %{source: :recording_2, destination: :broadcast, command: :user_released})
   end
 
   describe "vendor_command" do
-    it "parses message"
+    it "parses message" do
+      expect(Parser.from_code("2F:89:00:FF:34")) |> to(eq %{source: :recording_2, destination: :broadcast, command: :vendor_command, code: "00:FF:34"})
+    end
   end
 
   describe "vendor_command_with_id" do
@@ -264,10 +276,14 @@ defmodule CEC.Parsers.ParserSpec do
   end
 
   describe "vendor_remote_button_down" do
-    it "parses message"
+    it "parses message" do
+      expect(Parser.from_code("2F:8A:00:FF:34")) |> to(eq %{source: :recording_2, destination: :broadcast, command: :vendor_remote_button_down, code: "00:FF:34"})
+    end
   end
 
   describe "vendor_remote_button_up" do
-    it "parses message"
+    it "parses message" do
+      expect(Parser.from_code("2F:8B")) |> to(eq %{source: :recording_2, destination: :broadcast, command: :vendor_remote_button_up})
+    end
   end
 end

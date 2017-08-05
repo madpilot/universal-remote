@@ -34,6 +34,9 @@ defmodule CEC.Parsers.Parser do
       :routing_change -> CEC.Parsers.SystemInformation.routing_change(arguments)
       :routing_information -> %{address: Arguments.to_address(arguments)}
       :set_osd_name -> %{value: Arguments.to_ascii(arguments)}
+      :user_pressed -> %{key: CEC.Parsers.ControlCodes.user_pressed(arguments)}
+      :vendor_command -> %{code: arguments |> Enum.join(":")}
+      :vendor_remote_button_down -> %{code: arguments |> Enum.join(":")}
       _ -> %{arguments: arguments}
     end
   end
