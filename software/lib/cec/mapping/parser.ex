@@ -1,5 +1,6 @@
 defmodule CEC.Mapping.Parser do
-  alias CEC.Mapping.{Source, Destination, OpCodes, Vendor}
+  alias CEC.Mapping.{Source, Destination, OpCodes, Arguments}
+  alias CEC.Mapping.{DeckStatus, DeckStatusRequest}
   use Bitwise, only_operators: true
 
   def map_devices(devices) do
@@ -15,33 +16,13 @@ defmodule CEC.Mapping.Parser do
     OpCodes.from_code(opcode |> Integer.parse(16) |> elem(0))
   end
 
-  def arguments_to_string(arguments) do
-    arguments
-    |> Enum.map(fn(int) -> int |> Integer.parse(16) |> elem(0) end)
-    |> to_string
-  end
-
-  def arguments_to_address(arguments) do
-    arguments
-    |> Enum.join(".")
-  end
-
-  def arguments_to_integer(arguments) do
-    arguments
-    |> Enum.join("")
-    |> Integer.parse(16)
-    |> elem(0)
-  end
-
-  def arguments_to_vendor(arguments) do
-    arguments_to_integer(arguments)
-    |> Vendor.from_code
-  end
-
   def map_arguments(opcode, arguments) do
     case opcode |> map_opcode do
-      :set_osd_name -> %{value: arguments_to_string(arguments)}
-      :device_vendor_id -> %{vendor: arguments_to_vendor(arguments)}
+      :deck_status -> %{status: arguments |> List.first |> DeckStatus.from_code}
+      :give_deck_status -> %{status: arguments |> List.first |> DeckStatusRequest.from_code}
+      :device_vendor_id -> %{vendor: Arguments.to_vendor(arguments)}
+      :set_osd_name -> %{value: Arguments.to_ascii(arguments)}
+
 
       _ -> %{arguments: arguments}
     end
