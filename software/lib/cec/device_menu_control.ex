@@ -12,8 +12,8 @@ defmodule CEC.DeviceMenuControl do
     RemoteControlPassthrough.user_released(source, destination)
   end
 
-  def menu_response(source, destination, type) do
-    CEC.send(source, destination, OpCodes.to_code(:menu_response), [MenuRequest.to_code(type)])
+  def menu_request(source, destination, type) do
+    CEC.send(source, destination, OpCodes.to_code(:menu_request), [MenuRequest.to_code(type)])
   end
 
   def menu_status(source, destination, state) do

@@ -69,9 +69,205 @@ defmodule CEC.Parsers.ParserSpec do
     end
   end
 
-  describe "give_device_vendor_id" do
+  describe "give_osd_name" do
     it "parses message" do
-      expect(Parser.from_code("6A:8C")) |> to(eq %{source: :tuner_2, destination: :tuner_4, command: :give_device_vendor_id})
+      expect(Parser.from_code("6A:46")) |> to(eq %{source: :tuner_2, destination: :tuner_4, command: :give_osd_name})
     end
+  end
+
+  describe "give_physical_address" do
+    it "parses message" do
+      expect(Parser.from_code("6A:83")) |> to(eq %{source: :tuner_2, destination: :tuner_4, command: :give_physical_address})
+    end
+  end
+
+  describe "give_system_audio_mode_status" do
+    it "parses message" do
+      expect(Parser.from_code("65:7D")) |> to(eq %{source: :tuner_2, destination: :audio_system, command: :give_system_audio_mode_status})
+    end
+  end
+
+  describe "give_tuner_device_status" do
+    it "parses message"
+  end
+
+  describe "image_view_on" do
+    it "parses message" do
+      expect(Parser.from_code("20:04")) |> to(eq %{source: :recording_2, destination: :tv, command: :image_view_on})
+    end
+  end
+
+  describe "inactive_source" do
+    it "parses message" do
+      expect(Parser.from_code("20:9D:11:12")) |> to(eq %{source: :recording_2, destination: :tv, command: :inactive_source, address: "1.1.1.2"})
+    end
+  end
+
+  describe "menu_request" do
+    it "parses message" do
+      expect(Parser.from_code("04:8D:01")) |> to(eq %{source: :tv, destination: :playback_1, command: :menu_request, type: :deactivate})
+    end
+  end
+
+  describe "menu_status" do
+    it "parses message" do
+      expect(Parser.from_code("90:8E:00")) |> to(eq %{source: :playback_3, destination: :tv, command: :menu_status, state: :activated})
+    end
+  end
+
+  describe "play" do
+    it "parses message"
+  end
+
+  describe "polling" do
+    it "parses message" do
+      expect(Parser.from_code("04")) |> to(eq %{source: :tv, destination: :playback_1, command: :polling})
+    end
+  end
+
+  describe "record_off" do
+    it "parses message" do
+      expect(Parser.from_code("02:0B")) |> to(eq %{source: :tv, destination: :recording_2, command: :record_off})
+    end
+  end
+
+  describe "record_on" do
+    it "parses message"
+  end
+
+  describe "record_status" do
+    it "parses message"
+  end
+
+   describe "record_tv_screen" do
+    it "parses message" do
+      expect(Parser.from_code("02:0F")) |> to(eq %{source: :tv, destination: :recording_2, command: :record_tv_screen})
+    end
+  end
+
+  describe "report_audio_status" do
+    it "parses message" do
+      expect(Parser.from_code("15:7A:2D")) |> to(eq %{source: :recording_1, destination: :audio_system, command: :report_audio_status, muted: false, volume: 45})
+    end
+  end
+
+  describe "report_physical_address" do
+    it "parses message" do
+      expect(Parser.from_code("2F:84:34:21:01")) |> to(eq %{source: :recording_2, destination: :broadcast, command: :report_physical_address, address: "3.4.2.1", type: :recording})
+    end
+  end
+
+  describe "request_active_source" do
+    it "parses message" do
+      expect(Parser.from_code("6F:85")) |> to(eq %{source: :tuner_2, destination: :broadcast, command: :request_active_source})
+    end
+  end
+
+  describe "routing_change" do
+    it "parses message" do
+      expect(Parser.from_code("6F:80:32:11:32:13")) |> to(eq %{source: :tuner_2, destination: :broadcast, command: :routing_change, original_address: "3.2.1.1", new_address: "3.2.1.3"})
+    end
+  end
+
+  describe "routing_information" do
+    it "parses message" do
+      expect(Parser.from_code("5F:81:31:22")) |> to(eq %{source: :audio_system, destination: :broadcast, command: :routing_information, address: "3.1.2.2"})
+    end
+  end
+
+  describe "select_analogue_service" do
+    it "parses message"
+  end
+
+  describe "select_digital_service" do
+    it "parses message"
+  end
+
+  describe "set_analogue_timer" do
+    it "parses message"
+  end
+
+  describe "set_audio_rate" do
+    it "parses message"
+  end
+
+  describe "set_digital_timer" do
+    it "parses message"
+  end
+
+  describe "set_external_timer" do
+    it "parses message"
+  end
+
+  describe "set_menu_language" do
+    it "parses message"
+  end
+
+  describe "set_osd_name" do
+    it "parses message"
+  end
+
+  describe "set_osd_string" do
+    it "parses message"
+  end
+
+  describe "set_stream_path" do
+    it "parses message"
+  end
+
+  describe "standby" do
+    it "parses message"
+  end
+
+  describe "system_audio_mode_request" do
+    it "parses message"
+  end
+
+  describe "system_audio_mode_status" do
+    it "parses message"
+  end
+
+  describe "text_view_on" do
+    it "parses message"
+  end
+
+  describe "timer_cleared_status" do
+    it "parses message"
+  end
+
+  describe "tuner_device_status" do
+    it "parses message"
+  end
+
+  describe "tuner_step_decrement" do
+    it "parses message"
+  end
+
+  describe "tuner_step_increment" do
+    it "parses message"
+  end
+
+  describe "user_control_pressed" do
+    it "parses message"
+  end
+
+  describe "user_control_released" do
+    it "parses message"
+  end
+
+  describe "vendor_command" do
+    it "parses message"
+  end
+
+  describe "vendor_command_with_id" do
+    it "parses message"
+  end
+
+  describe "vendor_remote_button_down" do
+    it "parses message"
+  end
+
+  describe "vendor_remote_button_up" do
+    it "parses message"
   end
 end

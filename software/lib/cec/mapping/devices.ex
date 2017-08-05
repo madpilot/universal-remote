@@ -3,10 +3,12 @@ defmodule CEC.Mapping.Devices do
 
   def devices do
     [
+      tv: 0x0,
       recording: 0x1,
       reserved: 0x2,
       tuner: 0x3,
-      playback: 0x4
+      playback: 0x4,
+      audio_system: 0x5
     ]
   end
 

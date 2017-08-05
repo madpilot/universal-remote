@@ -17,17 +17,17 @@ defmodule CEC.SystemAudioControlSpec do
     end
   end
 
-  describe "report_audio_state" do
+  describe "report_audio_status" do
     describe "muted" do
       it "receives the correct code" do
-        CEC.SystemAudioControl.report_audio_state(:tv, :audio_system, true, 45)
+        CEC.SystemAudioControl.report_audio_status(:tv, :audio_system, true, 45)
         assert_receive("05:7A:AD")
       end
     end
 
     describe "not muted" do
       it "receives the correct code" do
-        CEC.SystemAudioControl.report_audio_state(:tv, :audio_system, false, 45)
+        CEC.SystemAudioControl.report_audio_status(:tv, :audio_system, false, 45)
         assert_receive("05:7A:2D")
       end
     end

@@ -11,10 +11,10 @@ defmodule CEC.SystemAudioControl do
     CEC.send(source, destination, OpCodes.to_code(:give_system_audio_mode_status))
   end
 
-  def report_audio_state(source, destination, muted, volume) do
+  def report_audio_status(source, destination, muted, volume) do
     case muted do
-      true -> CEC.send(source, destination, OpCodes.to_code(:report_audio_state), [128 + volume])
-      false -> CEC.send(source, destination, OpCodes.to_code(:report_audio_state), [volume])
+      true -> CEC.send(source, destination, OpCodes.to_code(:report_audio_status), [128 + volume])
+      false -> CEC.send(source, destination, OpCodes.to_code(:report_audio_status), [volume])
     end
   end
 

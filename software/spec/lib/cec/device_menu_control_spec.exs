@@ -17,9 +17,9 @@ defmodule CEC.DeviceMenuControlSpec do
     end
   end
 
-  describe "menu_response" do
+  describe "menu_request" do
     it "receives the correct code" do
-      CEC.DeviceMenuControl.menu_response(:unregistered, :tv, :activate)
+      CEC.DeviceMenuControl.menu_request(:unregistered, :tv, :activate)
       assert_receive("F0:8D:00")
     end
   end

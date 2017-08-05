@@ -21,18 +21,19 @@ defmodule CEC.Parsers.Parser do
     case opcode |> map_opcode do
       :active_source -> %{address: Arguments.to_address(arguments)}
       :cec_version -> %{version: CEC.Parsers.Version.version(arguments)}
-      :clear_analogur_timer -> raise "Not implemented"
-      :clear_digital_timer -> raise "Not implemented"
-      :clear_external_timer -> raise "Not implemented"
       :deck_control -> %{mode: CEC.Parsers.DeckControl.deck_control(arguments)}
       :deck_status -> %{status: CEC.Parsers.DeckControl.deck_status(arguments)}
       :device_vendor_id -> %{vendor: Arguments.to_vendor(arguments)}
       :feature_abort -> CEC.Parsers.Abort.feature_abort(arguments)
       :give_deck_status -> %{status: CEC.Parsers.DeckControl.give_deck_status(arguments)}
-
+      :inactive_source -> %{address: Arguments.to_address(arguments)}
+      :menu_status -> %{state: CEC.Parsers.DeviceMenuControl.menu_status(arguments)}
+      :menu_request -> %{type: CEC.Parsers.DeviceMenuControl.menu_request(arguments)}
+      :report_physical_address -> CEC.Parsers.SystemInformation.report_physical_address(arguments)
+      :report_audio_status -> CEC.Parsers.SystemAudioControl.give_audio_status(arguments)
+      :routing_change -> CEC.Parsers.SystemInformation.routing_change(arguments)
+      :routing_information -> %{address: Arguments.to_address(arguments)}
       :set_osd_name -> %{value: Arguments.to_ascii(arguments)}
-
-
       _ -> %{arguments: arguments}
     end
   end

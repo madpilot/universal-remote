@@ -38,7 +38,7 @@ defmodule CEC.Mapping.OpCodes do
       system_audio_mode_request: 0x70,
       give_audio_status: 0x71,
       set_system_audio_mode: 0x72,
-      report_audio_state: 0x7A,
+      report_audio_status: 0x7A,
       give_system_audio_mode_status: 0x7D,
       system_audio_mode_status: 0x7E,
 
@@ -54,7 +54,7 @@ defmodule CEC.Mapping.OpCodes do
       vendor_remote_button_down: 0x8a,
       vendor_remote_button_up: 0x8b,
       give_device_vendor_id: 0x8c,
-      menu_response: 0x8d,
+      menu_request: 0x8d,
       menu_status: 0x8e,
       give_device_power_status: 0x8f,
 
