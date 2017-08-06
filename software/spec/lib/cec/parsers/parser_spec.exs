@@ -194,7 +194,9 @@ defmodule CEC.Parsers.ParserSpec do
   end
 
   describe "set_audio_rate" do
-    it "parses message"
+    it "parses message"  do
+      expect(Parser.from_code("05:9A:04")) |> to(eq %{source: :tv, destination: :audio_system, command: :set_audio_rate, rate: :nrc_standard})
+    end
   end
 
   describe "set_digital_timer" do
