@@ -10,23 +10,6 @@ defmodule LIRC.ProcessSpec do
     end
   end
 
-  # describe "sending a lirc command" do
-  #   let port: self()
-
-  #   it "send the command code to the port" do
-  #     CEC.Process.handle_call({:send_code, "00:11"}, self(), %{port: port()})
-  #     assert_receive({_, {:command, "tx 00:11\n"}})
-  #   end
-
-  #   describe "#send_code" do
-  #     before do: allow GenServer |> to(accept :call, fn(_, _) -> nil end)
-  #     it "sends the command code to the port" do
-  #       CEC.Process.send_code("00:11")
-  #       expect(GenServer) |> to(accepted :call, [CEC.Process, {:send_code, "00:11"}])
-  #     end
-  #   end
-  # end
-
   describe "list_devices" do
     subject do: LIRC.Process.list_devices()
     before do: allow System |> to(accept :cmd, fn(_, ["list", "", ""]) -> {"irsend: foxtel\nirsend: tv\nirsend: receiver", 0} end)
@@ -46,6 +29,17 @@ defmodule LIRC.ProcessSpec do
     it "returns a set of keys" do
       {:ok, devices} = subject()
       expect(devices) |> to(eq([:key_0, :key_1, :key_2]))
+    end
+  end
+
+  describe "sending a lirc command" do
+    before do: allow System |> to(accept :cmd, fn(_, _) -> {"", 0} end)
+    subject do: LIRC.Process.send_command(:foxtel, :key_volumeup)
+
+    it "send the command code to the port" do
+      [irsend: irsend, irw: _] = Application.get_env(:universal_remote, LIRC.Process)
+      {:ok} = subject()
+      expect(System) |> to(accepted :cmd, [irsend, ["send_once", "foxtel", "KEY_VOLUMEUP"]])
     end
   end
 end
