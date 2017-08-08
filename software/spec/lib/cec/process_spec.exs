@@ -1,4 +1,4 @@
-defmodule CEC.Mapping.ProcessSpec do
+defmodule CEC.ProcessSpec do
   use ESpec
 
   describe "receiving lines from the port" do

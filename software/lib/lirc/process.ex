@@ -16,12 +16,58 @@ defmodule LIRC.Process do
     {:noreply, state}
   end
 
-  def handle_call({:send_code, device, key}, _from, state) do
+
+  def handle_call({:list_devices}, _from, state) do
+    {output, exit_code} = System.cmd(state[:irsend], ["list", "", ""])
+
+    case exit_code do
+      0 -> (
+        devices = output
+          |> String.split("\n")
+          |> Enum.map(fn(line) ->
+            case Regex.run(~r/^irsend: (.+)$/, line) do
+              [_, device] -> device |> String.to_atom
+            end
+          end)
+
+        {:reply, {:ok, devices}, state}
+      )
+    end
+  end
+
+  def handle_call({:list_commands, device}, _from, state) do
+    {output, exit_code} = System.cmd(state[:irsend], ["list", device, ""])
+
+    case exit_code do
+      0 -> (
+        commands = output
+          |> String.split("\n")
+          |> Enum.map(fn(line) ->
+            case Regex.run(~r/^irsend:\s+\S+\s+(.+)$/, line) do
+              [_, key] -> key |> String.downcase |> String.to_atom
+            end
+          end)
+
+        {:reply, {:ok, commands}, state}
+      )
+      1 -> {:reply, {:error}}
+    end
+  end
+
+  def handle_call({:send_command, device, key}, _from, state) do
     System.cmd(state[:irsend], ["send_once", device, key])
     {:reply, {:ok}, state}
   end
 
-  def send_code(device, key) do
+  def list_devices() do
+    GenServer.call(LIRC.Process, {:list_devices})
+  end
+
+  def list_commands(device) do
+    GenServer.call(LIRC.Process, {:list_commands, device |> Atom.to_string})
+  end
+
+  def send_command(device, key) do
     GenServer.call(LIRC.Process, {:send_code, device |> Atom.to_string, key |> Atom.to_string |> String.upcase})
   end
 end
