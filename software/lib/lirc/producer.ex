@@ -12,11 +12,11 @@ defmodule LIRC.Producer do
   defp build_packet(command, device) do
     %{command: command  |> String.downcase |> String.to_atom,
       destination: device |> String.to_atom,
-      source: nil}
+      source: nil,
+      bus: :lirc}
   end
 
   defp parse_line(data) do
-    IO.puts data
     case Regex.run(~r/\S+\s+\S{2}\s+(.+)\s+(.+)$/, data) do
       [_, command, device] -> build_packet(command, device)
                          _ -> nil

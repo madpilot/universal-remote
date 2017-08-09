@@ -67,6 +67,7 @@ defmodule CEC.Parsers.Parser do
       [devices | [opcode | []]] -> map_elements(%{devices: devices, opcode: opcode})
       [devices | [opcode | arguments]] -> map_elements(%{devices: devices, opcode: opcode, arguments: arguments})
     end
+    |> Map.merge(%{bus: :cec})
   end
 
   def from_code(code) do

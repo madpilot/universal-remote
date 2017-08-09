@@ -8,7 +8,6 @@ defmodule LIRC.Supervisor do
   def init(_) do
     children = [
       worker(LIRC.Producer, []),
-      worker(LIRC.Consumer, []),
       worker(LIRC.Process, [])
     ]
     supervise(children, strategy: :one_for_one)
