@@ -17,7 +17,7 @@ config :universal_remote, UniversalRemote.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
-  check_origin: false,
+  check_origin: false
 
 # Watch static and templates for browser reloading.
 config :universal_remote, UniversalRemote.Endpoint,
