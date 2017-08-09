@@ -5,7 +5,7 @@ defmodule LIRC.Supervisor do
     Supervisor.start_link(__MODULE__, %{}, [name: __MODULE__])
   end
 
-  def init(state) do
+  def init(_) do
     children = [
       worker(LIRC.Producer, []),
       worker(LIRC.Consumer, []),

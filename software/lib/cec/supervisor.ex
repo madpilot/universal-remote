@@ -5,7 +5,7 @@ defmodule CEC.Supervisor do
     Supervisor.start_link(__MODULE__, %{}, [name: __MODULE__])
   end
 
-  def init(state) do
+  def init(_) do
     children = [
       worker(CEC.Producer, []),
       worker(CEC.Consumer, []),

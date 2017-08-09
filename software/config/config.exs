@@ -5,14 +5,6 @@
 # is restricted to this project.
 use Mix.Config
 
-# Configures the endpoint
-config :universal_remote, UniversalRemote.Endpoint,
-  url: [host: "localhost"],
-  secret_key_base: "tPE5J6AHCCSOTd9tVByf+5XjRGdBcgkNTJpXUB9I1/X9IDnTixMR7nHjnL8fWbaA",
-  render_errors: [view: UniversalRemote.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: UniversalRemote.PubSub,
-           adapter: Phoenix.PubSub.PG2]
-
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
