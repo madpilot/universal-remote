@@ -11,7 +11,8 @@ defmodule UniversalRemote do
       # Start your own worker by calling: UniversalRemote.Worker.start_link(arg1, arg2, arg3)
       # worker(UniversalRemote.Worker, [arg1, arg2, arg3]),
       supervisor(CEC.Supervisor, []),
-      supervisor(LIRC.Supervisor, [])
+      supervisor(LIRC.Supervisor, []),
+      worker(Server.TCP.Server, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
