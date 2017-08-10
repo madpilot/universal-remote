@@ -18,7 +18,7 @@ defmodule UniversalRemote.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {UniversalRemote, []},
-     applications: [:cowboy, :logger]]
+     applications: [:ranch, :cowboy, :logger]]
   end
 
   # Specifies which paths to compile per environment.

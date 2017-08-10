@@ -12,7 +12,7 @@ defmodule UniversalRemote do
       # worker(UniversalRemote.Worker, [arg1, arg2, arg3]),
       supervisor(CEC.Supervisor, []),
       supervisor(LIRC.Supervisor, []),
-      worker(Server.TCP.Server, [])
+      supervisor(Server.TCP.Worker, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
