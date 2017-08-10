@@ -2,18 +2,17 @@ defmodule Server.TCP.Handler do
   use GenStage
 
   def start_link(ref, socket, transport, opts) do
-    GenStage.start_link(__MODULE__, {socket, transport})
     pid = spawn_link(__MODULE__, :init, [ref, socket, transport, opts])
     {:ok, pid}
   end
 
   def init({socket, transport}) do
-    IO.puts "Init GenStage"
     {:consumer, {socket, transport}, subscribe_to: [CEC.Producer, LIRC.Producer]}
   end
 
   def init(ref, socket, transport, _Opts = []) do
     :ok = :ranch.accept_ack(ref)
+    GenStage.start_link(__MODULE__, {socket, transport})
     loop(socket, transport)
   end
 
@@ -31,13 +30,22 @@ defmodule Server.TCP.Handler do
     {:noreply, [], state}
   end
 
+  def parse_event(data) do
+    case data |> Poison.decode! do
+      %{"bus" => "lirc", "destination" => destination, "command" => command} ->
+        LIRC.Process.send_command(destination |> String.to_atom, command |> String.to_atom)
+      _ -> nil
+    end
+  end
+
   def loop(socket, transport) do
-    case transport.recv(socket, 0, 5000) do
+    case transport.recv(socket, 0, 3000) do
       {:ok, data} ->
-        transport.send(socket, data)
+        data
+        |> parse_event
+
         loop(socket, transport)
-      _ ->
-        :ok = transport.close(socket)
+      {:error, :timeout} -> loop(socket, transport)
     end
   end
 end
