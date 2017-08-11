@@ -1,4 +1,4 @@
-defmodule UniversalRemote.Remote do
+defmodule UniversalRemote.Remotes.Behaviour do
   @callback devices :: {Atom.t, [Atom.t]}
   @callback commands(Atom.t) :: {Atom.t, [Atom.t]}
   @callback send_once(Atom.t, Atom.t) :: Atom.t

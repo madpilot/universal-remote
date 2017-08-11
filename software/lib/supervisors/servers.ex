@@ -7,7 +7,6 @@ defmodule Supervisors.Servers do
 
   def init(_) do
     children = [
-      supervisor(Server.TCP.Worker, []),
       Plug.Adapters.Cowboy.child_spec(:http, Server.Web.Router, [], [port: 4001])
     ]
     supervise(children, strategy: :one_for_one)

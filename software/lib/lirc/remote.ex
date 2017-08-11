@@ -1,9 +1,8 @@
 defmodule LIRC.Remote do
-  @behaviour UniversalRemote.Remote
+  @behaviour UniversalRemote.Remotes.Behaviour
 
   alias LIRC.Process
 
-  # use Remote
   def devices do
     Process.list_devices
   end

@@ -1,9 +1,9 @@
 defmodule CEC.Remote do
-  @behaviour UniversalRemote.Remote
+  @behaviour UniversalRemote.Remotes.Behaviour
+
   alias CEC.Mapping.{Destination, ControlCodes}
   alias CEC.RemoteControlPassthrough
 
-  # use Remote
   def devices do
     {:ok, Destination.devices
     |> Enum.map(fn(k) ->
@@ -12,7 +12,7 @@ defmodule CEC.Remote do
     end)}
   end
 
-  def commands(_) do
+  def commands(_device) do
     {:ok, ControlCodes.controls
     |> Enum.map(fn(k) ->
       k |> elem(0)

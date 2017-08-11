@@ -15,7 +15,6 @@ defmodule Server.Web.Router do
   end
 
   forward "/remotes", to: Server.Web.Remotes.Router
-  forward "/devices", to: Server.Web.Devices.Router
 
   match _ do
     send_resp(conn, 404, "oops")
