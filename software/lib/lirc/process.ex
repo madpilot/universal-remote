@@ -23,7 +23,7 @@ defmodule LIRC.Process do
     case exit_code do
       0 -> (
         devices = output
-          |> String.split("\n")
+          |> String.split("\n", trim: true)
           |> Enum.map(fn(line) ->
             case Regex.run(~r/^irsend: (.+)$/, line) do
               [_, device] -> device |> String.to_atom
@@ -44,7 +44,7 @@ defmodule LIRC.Process do
     case exit_code do
       0 -> (
         commands = output
-          |> String.split("\n")
+          |> String.split("\n", trim: true)
           |> Enum.map(fn(line) ->
             case Regex.run(~r/^irsend:\s+\S+\s+(.+)$/, line) do
               [_, key] -> key |> String.downcase |> String.to_atom
