@@ -24,12 +24,12 @@ defmodule CEC.Remote do
     {:ok}
   end
 
-  def start_send(device, key) do
+  def send_start(device, key) do
     RemoteControlPassthrough.user_pressed(:unregistered, device, key)
     {:ok}
   end
 
-  def stop_send(device, _) do
+  def send_stop(device, _) do
     RemoteControlPassthrough.user_released(:unregistered, device)
     {:ok}
   end

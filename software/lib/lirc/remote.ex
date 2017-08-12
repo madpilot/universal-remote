@@ -12,14 +12,14 @@ defmodule LIRC.Remote do
   end
 
   def send_once(device, key) do
-    Process.send_command(device, key)
+    Process.send_once(device, key)
   end
 
-  def start_send(device, key) do
-    Process.start_send(device, key)
+  def send_start(device, key) do
+    Process.send_start(device, key)
   end
 
-  def stop_send(device, key) do
-    Process.stop_send(device, key)
+  def send_stop(device, key) do
+    Process.send_stop(device, key)
   end
 end

@@ -71,15 +71,15 @@ defmodule LIRC.Process do
     end
   end
 
-  def handle_call({:send_command, device, key}, from, state) do
+  def handle_call({:send_once, device, key}, from, state) do
     exec_command(device, key, "send_once", from, state)
   end
 
-  def handle_call({:start_send, device, key}, from, state) do
+  def handle_call({:send_start, device, key}, from, state) do
     exec_command(device, key, "send_start", from, state)
   end
 
-  def handle_call({:stop_send, device, key}, from, state) do
+  def handle_call({:send_stop, device, key}, from, state) do
     exec_command(device, key, "send_stop", from, state)
   end
 
@@ -91,15 +91,15 @@ defmodule LIRC.Process do
     GenServer.call(LIRC.Process, {:list_commands, device})
   end
 
-  def send_command(device, command) do
-    GenServer.call(LIRC.Process, {:send_command, device, command})
+  def send_once(device, command) do
+    GenServer.call(LIRC.Process, {:send_once, device, command})
   end
 
-  def start_send(device, command) do
-    GenServer.call(LIRC.Process, {:start_send, device, command})
+  def send_start(device, command) do
+    GenServer.call(LIRC.Process, {:send_start, device, command})
   end
 
-  def stop_send(device, command) do
-    GenServer.call(LIRC.Process, {:stop_send, device, command})
+  def send_stop(device, command) do
+    GenServer.call(LIRC.Process, {:send_stop, device, command})
   end
 end

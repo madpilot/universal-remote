@@ -58,7 +58,7 @@ defmodule Server.Web.Remotes.Router do
     %{key: key} = conn.body_params
 
     with {:ok, module} <- Remotes.get(bus |> String.to_atom),
-         {:ok} <- module.start_send(device |> String.to_atom, key |> String.to_atom)
+         {:ok} <- module.send_start(device |> String.to_atom, key |> String.to_atom)
     do
       send_resp(conn, 200, "OK")
     else
@@ -71,7 +71,7 @@ defmodule Server.Web.Remotes.Router do
     %{key: key} = conn.body_params
 
     with {:ok, module} <- Remotes.get(bus |> String.to_atom),
-         {:ok} <- module.stop_send(device |> String.to_atom, key |> String.to_atom)
+         {:ok} <- module.send_stop(device |> String.to_atom, key |> String.to_atom)
     do
       send_resp(conn, 200, "OK")
     else
