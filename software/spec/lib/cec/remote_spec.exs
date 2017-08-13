@@ -37,4 +37,29 @@ defmodule CEC.RemoteSpec do
       expect(devices) |> to(eq(commands()))
     end
   end
+
+  describe "sending" do
+    before do: allow GenServer |> to(accept :cast, fn(_, _) -> nil end)
+
+    describe "send_once" do
+      it "sends a user press to the CEC bus" do
+        CEC.Remote.send_once(:tv, :up)
+        expect(GenServer) |> to(accepted :call, [CEC.Process, {:send_code, "F0:44:01"}])
+      end
+    end
+
+    describe "send_start" do
+      it "sends a user press to the CEC bus" do
+        CEC.Remote.send_start(:tv, :up)
+        expect(GenServer) |> to(accepted :call, [CEC.Process, {:send_code, "F0:44:01"}])
+      end
+    end
+
+    describe "send_stop" do
+      it "sends a user release to the CEC bus" do
+        CEC.Remote.send_stop(:tv, :up)
+        expect(GenServer) |> to(accepted :call, [CEC.Process, {:send_code, "F0:45"}])
+      end
+    end
+  end
 end
