@@ -1,12 +1,12 @@
 defmodule Remotes do
   use GenServer
 
-  def start_link do
-    GenServer.start_link(__MODULE__, :ok, [name: __MODULE__])
+  def start_link(initial = %{}) do
+    GenServer.start_link(__MODULE__, initial, [name: __MODULE__])
   end
 
-  def init(:ok) do
-    {:ok, %{:cec => CEC.Remote, :lirc => LIRC.Remote}}
+  def init(initial) do
+    {:ok, initial}
   end
 
   def register(name, module) do

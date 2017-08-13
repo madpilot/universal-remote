@@ -8,7 +8,7 @@ defmodule UniversalRemote do
 
     # Define workers and child supervisors to be supervised
     children = [
-      worker(Remotes, []),
+      worker(Remotes, [%{:cec => CEC.Remote, :lirc => LIRC.Remote}]),
       supervisor(Supervisors.Buses, []),
       supervisor(Supervisors.Servers, [])
     ]
