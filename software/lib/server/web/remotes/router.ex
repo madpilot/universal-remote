@@ -15,7 +15,6 @@ defmodule Server.Web.Remotes.Router do
 
   get "/" do
     conn
-    |> put_resp_content_type("application/json")
     |> send_json(200, Remotes.list |> Map.keys)
   end
 
@@ -25,8 +24,8 @@ defmodule Server.Web.Remotes.Router do
     do
       send_json(conn, 200, list)
     else
-      {:error, :not_registered} -> send_resp(conn, 404, "Not found")
-      _ ->  send_resp(conn, 500, "Error")
+      {:error, :not_registered} -> send_json(conn, 404, %{error: "Not Found"})
+      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
 
@@ -36,8 +35,9 @@ defmodule Server.Web.Remotes.Router do
     do
       send_json(conn, 200, list)
     else
-      {:error, :not_registered} -> send_resp(conn, 404, "Not found")
-      _ ->  send_resp(conn, 500, "Error")
+      {:error, :not_registered} -> send_json(conn, 404, %{error: "Not Found"})
+      {:error, :not_a_device} -> send_json(conn, 404, %{error: "Not Found"})
+      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
 
@@ -47,10 +47,11 @@ defmodule Server.Web.Remotes.Router do
     with {:ok, module} <- Remotes.get(bus |> String.to_atom),
          {:ok} <- module.send_once(device |> String.to_atom, key |> String.to_atom)
     do
-      send_resp(conn, 200, "OK")
+      send_json(conn, 200, %{ok: "ok"})
     else
-      {:error, :not_registered} -> send_resp(conn, 404, "Not found")
-      _ ->  send_resp(conn, 500, "Error")
+      {:error, :not_registered} -> send_json(conn, 404, %{error: "Not Found"})
+      {:error, :not_a_device} -> send_json(conn, 404, %{error: "Not Found"})
+      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
 
@@ -60,10 +61,11 @@ defmodule Server.Web.Remotes.Router do
     with {:ok, module} <- Remotes.get(bus |> String.to_atom),
          {:ok} <- module.send_start(device |> String.to_atom, key |> String.to_atom)
     do
-      send_resp(conn, 200, "OK")
+      send_json(conn, 200, %{ok: "ok"})
     else
-      {:error, :not_registered} -> send_resp(conn, 404, "Not found")
-      _ ->  send_resp(conn, 500, "Error")
+      {:error, :not_registered} -> send_json(conn, 404, %{error: "Not Found"})
+      {:error, :not_a_device} -> send_json(conn, 404, %{error: "Not Found"})
+      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
 
@@ -73,10 +75,11 @@ defmodule Server.Web.Remotes.Router do
     with {:ok, module} <- Remotes.get(bus |> String.to_atom),
          {:ok} <- module.send_stop(device |> String.to_atom, key |> String.to_atom)
     do
-      send_resp(conn, 200, "OK")
+      send_json(conn, 200, %{ok: "ok"})
     else
-      {:error, :not_registered} -> send_resp(conn, 404, "Not found")
-      _ ->  send_resp(conn, 500, "Error")
+      {:error, :not_registered} -> send_json(conn, 404, %{error: "Not Found"})
+      {:error, :not_a_device} -> send_json(conn, 404, %{error: "Not Found"})
+      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
 end

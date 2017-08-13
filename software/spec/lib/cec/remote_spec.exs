@@ -36,6 +36,14 @@ defmodule CEC.RemoteSpec do
       {:ok, devices} = subject()
       expect(devices) |> to(eq(commands()))
     end
+
+    context "device doesn't exist" do
+      let :device, do: :foo
+
+      it "returns an error" do
+        expect(subject()) |> to(eq {:error, :not_a_device})
+      end
+    end
   end
 
   describe "sending" do
@@ -46,6 +54,12 @@ defmodule CEC.RemoteSpec do
         CEC.Remote.send_once(:tv, :up)
         expect(GenServer) |> to(accepted :call, [CEC.Process, {:send_code, "F0:44:01"}])
       end
+
+      context "device doesn't exist" do
+        it "returns an error" do
+          expect(CEC.Remote.send_once(:foo, :up)) |> to(eq {:error, :not_a_device})
+        end
+      end
     end
 
     describe "send_start" do
@@ -53,12 +67,24 @@ defmodule CEC.RemoteSpec do
         CEC.Remote.send_start(:tv, :up)
         expect(GenServer) |> to(accepted :call, [CEC.Process, {:send_code, "F0:44:01"}])
       end
+
+      context "device doesn't exist" do
+        it "returns an error" do
+          expect(CEC.Remote.send_start(:foo, :up)) |> to(eq {:error, :not_a_device})
+        end
+      end
     end
 
     describe "send_stop" do
       it "sends a user release to the CEC bus" do
         CEC.Remote.send_stop(:tv, :up)
         expect(GenServer) |> to(accepted :call, [CEC.Process, {:send_code, "F0:45"}])
+      end
+
+      context "device doesn't exist" do
+        it "returns an error" do
+          expect(CEC.Remote.send_stop(:foo, :up)) |> to(eq {:error, :not_a_device})
+        end
       end
     end
   end
