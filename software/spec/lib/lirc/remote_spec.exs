@@ -21,6 +21,14 @@ defmodule LIRC.RemoteSpec do
       {:ok, devices} = subject()
       expect(devices) |> to(eq([:key_0, :key_1, :key_2]))
     end
+
+    context "device doesn't exist" do
+      before do: allow System |> to(accept :cmd, fn(_, ["list", "foxtel", ""]) -> {"irsend: command failed: list foxtel\nirsend: unknown remote: \"foxtel\"", 1} end)
+
+      it "returns an error" do
+        expect(subject()) |> to(eq {:unknown_remote})
+      end
+    end
   end
 
   describe "sending a single command" do
@@ -31,6 +39,23 @@ defmodule LIRC.RemoteSpec do
       [irsend: irsend, irw: _] = Application.get_env(:universal_remote, LIRC.Process)
       {:ok} = subject()
       expect(System) |> to(accepted :cmd, [irsend, ["send_once", "foxtel", "KEY_VOLUMEUP"]])
+    end
+
+    context "device doesn't exist" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_once", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel\nirsend: unknown remote: \"foxtel\"", 1} end)
+
+      it "returns an error" do
+        expect(subject()) |> to(eq {:unknown_remote})
+      end
+    end
+
+    context "key doesn't exist" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_once", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel\nirsend: unknown command: \"KEY_VOLUMEUP\"", 1} end)
+
+
+      it "returns an error" do
+        expect(subject()) |> to(eq {:unknown_command})
+      end
     end
   end
 
@@ -43,6 +68,23 @@ defmodule LIRC.RemoteSpec do
       {:ok} = subject()
       expect(System) |> to(accepted :cmd, [irsend, ["send_start", "foxtel", "KEY_VOLUMEUP"]])
     end
+
+    context "device doesn't exist" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_start", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel\nirsend: unknown remote: \"foxtel\"", 1} end)
+
+      it "returns an error" do
+        expect(subject()) |> to(eq {:unknown_remote})
+      end
+    end
+
+    context "key doesn't exist" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_start", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel\nirsend: unknown command: \"KEY_VOLUMEUP\"", 1} end)
+
+
+      it "returns an error" do
+        expect(subject()) |> to(eq {:unknown_command})
+      end
+    end
   end
 
   describe "sending a stop command" do
@@ -53,6 +95,23 @@ defmodule LIRC.RemoteSpec do
       [irsend: irsend, irw: _] = Application.get_env(:universal_remote, LIRC.Process)
       {:ok} = subject()
       expect(System) |> to(accepted :cmd, [irsend, ["send_stop", "foxtel", "KEY_VOLUMEUP"]])
+    end
+
+    context "device doesn't exist" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_stop", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel\nirsend: unknown remote: \"foxtel\"", 1} end)
+
+      it "returns an error" do
+        expect(subject()) |> to(eq {:unknown_remote})
+      end
+    end
+
+    context "key doesn't exist" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_stop", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel\nirsend: unknown command: \"KEY_VOLUMEUP\"", 1} end)
+
+
+      it "returns an error" do
+        expect(subject()) |> to(eq {:unknown_command})
+      end
     end
   end
 end

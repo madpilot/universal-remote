@@ -30,7 +30,7 @@ defmodule CEC.Remote do
   def commands(device) do
     case valid_device(device) do
       true -> {:ok, ControlCodes.controls |> keys}
-      false -> {:error, :not_a_device}
+      false -> {:unknown_remote}
     end
   end
 
@@ -41,9 +41,9 @@ defmodule CEC.Remote do
           RemoteControlPassthrough.user_pressed(:unregistered, device, key)
           {:ok}
         )
-        false -> {:error, :not_a_key}
+        false -> {:unknown_command}
       end
-      false -> {:error, :not_a_device}
+      false -> {:unknown_remote}
     end
   end
 
@@ -54,9 +54,9 @@ defmodule CEC.Remote do
           RemoteControlPassthrough.user_pressed(:unregistered, device, key)
           {:ok}
         )
-        false -> {:error, :not_a_key}
+        false -> {:unknown_command}
       end
-      false -> {:error, :not_a_device}
+      false -> {:unknown_remote}
     end
   end
 
@@ -67,9 +67,9 @@ defmodule CEC.Remote do
           RemoteControlPassthrough.user_released(:unregistered, device)
           {:ok}
         )
-        false -> {:error, :not_a_key}
+        false -> {:unknown_command}
       end
-      false -> {:error, :not_a_device}
+      false -> {:unknown_remote}
     end
   end
 end

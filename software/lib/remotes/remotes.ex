@@ -47,7 +47,7 @@ defmodule Remotes do
   def handle_call({:get, name}, _from, state) do
     case state do
        %{^name => module} -> {:reply, {:ok, module}, state}
-       _ -> {:reply, {:error, :not_registered}, state}
+       _ -> {:reply, {:unknown_bus}, state}
     end
   end
 

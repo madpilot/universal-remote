@@ -41,7 +41,7 @@ defmodule CEC.RemoteSpec do
       let :device, do: :foo
 
       it "returns an error" do
-        expect(subject()) |> to(eq {:error, :not_a_device})
+        expect(subject()) |> to(eq {:unknown_remote})
       end
     end
   end
@@ -57,13 +57,13 @@ defmodule CEC.RemoteSpec do
 
       context "device doesn't exist" do
         it "returns an error" do
-          expect(CEC.Remote.send_once(:foo, :up)) |> to(eq {:error, :not_a_device})
+          expect(CEC.Remote.send_once(:foo, :up)) |> to(eq {:unknown_remote})
         end
       end
 
       context "key doesn't exist" do
         it "returns an error" do
-          expect(CEC.Remote.send_once(:tv, :foo)) |> to(eq {:error, :not_a_key})
+          expect(CEC.Remote.send_once(:tv, :foo)) |> to(eq {:unknown_command})
         end
       end
     end
@@ -76,13 +76,13 @@ defmodule CEC.RemoteSpec do
 
       context "device doesn't exist" do
         it "returns an error" do
-          expect(CEC.Remote.send_start(:foo, :up)) |> to(eq {:error, :not_a_device})
+          expect(CEC.Remote.send_start(:foo, :up)) |> to(eq {:unknown_remote})
         end
       end
 
       context "key doesn't exist" do
         it "returns an error" do
-          expect(CEC.Remote.send_start(:tv, :foo)) |> to(eq {:error, :not_a_key})
+          expect(CEC.Remote.send_start(:tv, :foo)) |> to(eq {:unknown_command})
         end
       end
     end
@@ -95,13 +95,13 @@ defmodule CEC.RemoteSpec do
 
       context "device doesn't exist" do
         it "returns an error" do
-          expect(CEC.Remote.send_stop(:foo, :up)) |> to(eq {:error, :not_a_device})
+          expect(CEC.Remote.send_stop(:foo, :up)) |> to(eq {:unknown_remote})
         end
       end
 
       context "key doesn't exist" do
         it "returns an error" do
-          expect(CEC.Remote.send_stop(:tv, :foo)) |> to(eq {:error, :not_a_key})
+          expect(CEC.Remote.send_stop(:tv, :foo)) |> to(eq {:unknown_command})
         end
       end
     end

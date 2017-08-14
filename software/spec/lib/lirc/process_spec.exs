@@ -24,11 +24,22 @@ defmodule LIRC.ProcessSpec do
     let :device, do: :foxtel
 
     subject do: LIRC.Process.list_commands(device())
-    before do: allow System |> to(accept :cmd, fn(_, ["list", "foxtel", ""]) -> {"irsend: 0000000000000001 KEY_0\nirsend: 0000000000000002 KEY_1\nirsend: 0000000000000003 KEY_2", 0} end)
 
-    it "returns a set of keys" do
-      {:ok, devices} = subject()
-      expect(devices) |> to(eq([:key_0, :key_1, :key_2]))
+    describe "valid remote" do
+      before do: allow System |> to(accept :cmd, fn(_, ["list", "foxtel", ""]) -> {"irsend: 0000000000000001 KEY_0\nirsend: 0000000000000002 KEY_1\nirsend: 0000000000000003 KEY_2", 0} end)
+
+      it "returns a set of keys" do
+        {:ok, devices} = subject()
+        expect(devices) |> to(eq([:key_0, :key_1, :key_2]))
+      end
+    end
+
+    describe "invalid remote" do
+      before do: allow System |> to(accept :cmd, fn(_, ["list", "foxtel", ""]) -> {"irsend: command failed: list foxtel\nirsend: unknown remote: \"foxtel\"", 1} end)
+
+      it "returns a error" do
+        {:unknown_remote} = subject()
+      end
     end
   end
 
@@ -41,6 +52,22 @@ defmodule LIRC.ProcessSpec do
       {:ok} = subject()
       expect(System) |> to(accepted :cmd, [irsend, ["send_once", "foxtel", "KEY_VOLUMEUP"]])
     end
+
+    describe "invalid remote" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_once", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel\nirsend: unknown remote: \"foxtel\"", 1} end)
+
+      it "returns a error" do
+        {:unknown_remote} = subject()
+      end
+    end
+
+    describe "invalid command" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_once", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel KEY_VOLUMEUP\nirsend: unknown command: \"KEY_VOLUMEUP\"", 1} end)
+
+      it "returns a error" do
+        {:unknown_command} = subject()
+      end
+    end
   end
 
   describe "sending a lirc start command" do
@@ -52,6 +79,22 @@ defmodule LIRC.ProcessSpec do
       {:ok} = subject()
       expect(System) |> to(accepted :cmd, [irsend, ["send_start", "foxtel", "KEY_VOLUMEUP"]])
     end
+
+    describe "invalid remote" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_start", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel\nirsend: unknown remote: \"foxtel\"", 1} end)
+
+      it "returns a error" do
+        {:unknown_remote} = subject()
+      end
+    end
+
+    describe "invalid command" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_start", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel KEY_VOLUMEUP\nirsend: unknown command: \"KEY_VOLUMEUP\"", 1} end)
+
+      it "returns a error" do
+        {:unknown_command} = subject()
+      end
+    end
   end
 
   describe "sending a lirc stop command" do
@@ -62,6 +105,22 @@ defmodule LIRC.ProcessSpec do
       [irsend: irsend, irw: _] = Application.get_env(:universal_remote, LIRC.Process)
       {:ok} = subject()
       expect(System) |> to(accepted :cmd, [irsend, ["send_stop", "foxtel", "KEY_VOLUMEUP"]])
+    end
+
+    describe "invalid remote" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_stop", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel\nirsend: unknown remote: \"foxtel\"", 1} end)
+
+      it "returns a error" do
+        {:unknown_remote} = subject()
+      end
+    end
+
+    describe "invalid command" do
+      before do: allow System |> to(accept :cmd, fn(_, ["send_stop", "foxtel", "KEY_VOLUMEUP"]) -> {"irsend: command failed: list foxtel KEY_VOLUMEUP\nirsend: unknown command: \"KEY_VOLUMEUP\"", 1} end)
+
+      it "returns a error" do
+        {:unknown_command} = subject()
+      end
     end
   end
 end

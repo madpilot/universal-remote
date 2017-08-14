@@ -8,28 +8,37 @@ defmodule MockRemote do
   def commands(device) do
     case device do
       :exists -> {:ok, ["key_up", "key_down"]}
-      :not_exists -> {:error, :not_a_device}
+      :not_exists -> {:unknown_remote}
     end
   end
 
-  def send_once(device, _) do
+  def send_once(device, key) do
     case device do
-      :exists -> {:ok}
-      :not_exists -> {:error, :not_a_device}
+      :exists -> case key do
+        :exists -> {:ok}
+        :not_exists -> {:unknown_command}
+      end
+      :not_exists -> {:unknown_remote}
     end
   end
 
-  def send_start(device, _) do
+  def send_start(device, key) do
     case device do
-      :exists -> {:ok}
-      :not_exists -> {:error, :not_a_device}
+      :exists -> case key do
+        :exists -> {:ok}
+        :not_exists -> {:unknown_command}
+      end
+      :not_exists -> {:unknown_remote}
     end
   end
 
-  def send_stop(device, _) do
+  def send_stop(device, key) do
     case device do
-      :exists -> {:ok}
-      :not_exists -> {:error, :not_a_device}
+      :exists -> case key do
+        :exists -> {:ok}
+        :not_exists -> {:unknown_command}
+      end
+      :not_exists -> {:unknown_remote}
     end
   end
 end

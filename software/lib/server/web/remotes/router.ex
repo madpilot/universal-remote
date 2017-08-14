@@ -24,7 +24,7 @@ defmodule Server.Web.Remotes.Router do
     do
       send_json(conn, 200, list)
     else
-      {:error, :not_registered} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
@@ -35,8 +35,8 @@ defmodule Server.Web.Remotes.Router do
     do
       send_json(conn, 200, list)
     else
-      {:error, :not_registered} -> send_json(conn, 404, %{error: "Not Found"})
-      {:error, :not_a_device} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
@@ -49,8 +49,9 @@ defmodule Server.Web.Remotes.Router do
     do
       send_json(conn, 200, %{ok: "ok"})
     else
-      {:error, :not_registered} -> send_json(conn, 404, %{error: "Not Found"})
-      {:error, :not_a_device} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_key} -> send_json(conn, 404, %{error: "Not Found"})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
@@ -63,8 +64,9 @@ defmodule Server.Web.Remotes.Router do
     do
       send_json(conn, 200, %{ok: "ok"})
     else
-      {:error, :not_registered} -> send_json(conn, 404, %{error: "Not Found"})
-      {:error, :not_a_device} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_key} -> send_json(conn, 404, %{error: "Not Found"})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
@@ -77,8 +79,9 @@ defmodule Server.Web.Remotes.Router do
     do
       send_json(conn, 200, %{ok: "ok"})
     else
-      {:error, :not_registered} -> send_json(conn, 404, %{error: "Not Found"})
-      {:error, :not_a_device} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_key} -> send_json(conn, 404, %{error: "Not Found"})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end

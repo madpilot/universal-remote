@@ -75,7 +75,7 @@ defmodule RemotesSpec do
         let :test, do: :lirc
 
         it "returns an error" do
-          expect(subject()) |> to(eq {:error, :not_registered})
+          expect(subject()) |> to(eq {:unknown_bus})
         end
       end
     end

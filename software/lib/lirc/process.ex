@@ -35,6 +35,14 @@ defmodule LIRC.Process do
     end
   end
 
+  defp exec_error(body, state) do
+    case Regex.run(~r/unknown (command|remote)/, body) do
+      [_, "remote"] -> {:reply, {:unknown_remote}, state}
+      [_, "command"] -> {:reply, {:unknown_command}, state}
+      _ -> {:replay, {:error}, state}
+    end
+  end
+
   defp exec_command(device, key, send_state, _from, state) do
     device_string = device
       |> Atom.to_string
@@ -43,10 +51,11 @@ defmodule LIRC.Process do
       |> Atom.to_string
       |> String.upcase
 
-    {_, exit_code} = System.cmd(state[:irsend], [send_state, device_string, key_string])
+    {body, exit_code} = System.cmd(state[:irsend], [send_state, device_string, key_string])
 
     case exit_code do
       0 -> {:reply, {:ok}, state}
+      1 -> exec_error(body, state)
     end
   end
 
@@ -68,6 +77,7 @@ defmodule LIRC.Process do
 
         {:reply, {:ok, commands}, state}
       )
+      1 -> {:reply, {:unknown_remote}, state}
     end
   end
 
