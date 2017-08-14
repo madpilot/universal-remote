@@ -4,10 +4,16 @@ defmodule CEC.Remote do
   alias CEC.Mapping.{Destination, ControlCodes}
   alias CEC.RemoteControlPassthrough
 
-  def valid_device(device) do
+  defp valid_device(device) do
     Destination.devices
-    |> keys
+    |> keys()
     |> Enum.any?(fn(d) -> d == device end)
+  end
+
+  defp valid_key(key) do
+    ControlCodes.controls
+    |> keys()
+    |> Enum.any?(fn(k) -> k == key end)
   end
 
   defp keys(list) do
@@ -30,30 +36,39 @@ defmodule CEC.Remote do
 
   def send_once(device, key) do
     case valid_device(device) do
-      true -> (
-        RemoteControlPassthrough.user_pressed(:unregistered, device, key)
-        {:ok}
-      )
+      true -> case valid_key(key) do
+        true -> (
+          RemoteControlPassthrough.user_pressed(:unregistered, device, key)
+          {:ok}
+        )
+        false -> {:error, :not_a_key}
+      end
       false -> {:error, :not_a_device}
     end
   end
 
   def send_start(device, key) do
     case valid_device(device) do
-      true -> (
-        RemoteControlPassthrough.user_pressed(:unregistered, device, key)
-        {:ok}
-      )
+      true -> case valid_key(key) do
+        true -> (
+          RemoteControlPassthrough.user_pressed(:unregistered, device, key)
+          {:ok}
+        )
+        false -> {:error, :not_a_key}
+      end
       false -> {:error, :not_a_device}
     end
   end
 
-  def send_stop(device, _) do
+  def send_stop(device, key) do
     case valid_device(device) do
-      true -> (
-        RemoteControlPassthrough.user_released(:unregistered, device)
-        {:ok}
-      )
+      true -> case valid_key(key) do
+        true -> (
+          RemoteControlPassthrough.user_released(:unregistered, device)
+          {:ok}
+        )
+        false -> {:error, :not_a_key}
+      end
       false -> {:error, :not_a_device}
     end
   end

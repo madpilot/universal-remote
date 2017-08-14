@@ -1,6 +1,5 @@
 defmodule CEC.Parsers.Arguments do
   alias CEC.Mapping.Vendor
-  alias CEC.Mapping.AbortReasons
 
   def to_ascii(arguments) do
     arguments

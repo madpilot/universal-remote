@@ -35,6 +35,21 @@ defmodule LIRC.Process do
     end
   end
 
+  defp exec_command(device, key, send_state, _from, state) do
+    device_string = device
+      |> Atom.to_string
+
+    key_string = key
+      |> Atom.to_string
+      |> String.upcase
+
+    {_, exit_code} = System.cmd(state[:irsend], [send_state, device_string, key_string])
+
+    case exit_code do
+      0 -> {:reply, {:ok}, state}
+    end
+  end
+
   def handle_call({:list_commands, device}, _from, state) do
     device_string = device
        |> Atom.to_string
@@ -53,21 +68,6 @@ defmodule LIRC.Process do
 
         {:reply, {:ok, commands}, state}
       )
-    end
-  end
-
-  defp exec_command(device, key, send_state, _from, state) do
-    device_string = device
-      |> Atom.to_string
-
-    key_string = key
-      |> Atom.to_string
-      |> String.upcase
-
-    {_, exit_code} = System.cmd(state[:irsend], [send_state, device_string, key_string])
-
-    case exit_code do
-      0 -> {:reply, {:ok}, state}
     end
   end
 

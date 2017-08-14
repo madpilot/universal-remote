@@ -21,7 +21,7 @@ defmodule CEC do
   end
 
   defp prepare_command(tail, command) do
-    [ command |> Integer.to_string(16) |> String.rjust(2, ?0) | tail ]
+    [ command |> Integer.to_string(16) |> String.pad_leading(2, "0") | tail ]
   end
 
   # Need to group into bytes
@@ -50,7 +50,7 @@ defmodule CEC do
   def prepare_integer(tail, integer) do
     head = integer
     |> Integer.to_string(16)
-    |> String.rjust(2, ?0)
+    |> String.pad_leading(2, "0")
 
     [head | tail]
   end

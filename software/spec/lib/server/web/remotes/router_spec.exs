@@ -40,8 +40,6 @@ defmodule Server.Web.Remotes.RouterSpec do
 
   alias Server.Web.Remotes.Router
 
-  @opts Router.init([])
-
   describe "Server.Web.Remotes.RouterSpec" do
     before do: Remotes.register(:test, MockRemote)
     finally do: Remotes.deregister(:test)
