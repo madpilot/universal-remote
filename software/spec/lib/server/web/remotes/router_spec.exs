@@ -140,5 +140,191 @@ defmodule Server.Web.Remotes.RouterSpec do
         end
       end
     end
+
+    describe "/:bus/:device/send" do
+      let :bus, do: "test"
+      let :device, do: "exists"
+      let :key, do: "exists"
+
+      let :response, do: conn(:put, "/#{bus()}/#{device()}/send", "{\"key\":\"#{key()}\"}")
+        |> put_req_header("content-type", "application/json")
+        |> Router.call([])
+
+      describe "bus that is registered" do
+        let :bus, do: "test"
+
+        describe "a device that is registered" do
+          let :device, do: "exists"
+
+          describe "a command that exists" do
+            let :key, do: "exists"
+
+            it "returns a 200" do
+              expect(response().status) |> to(eq 200)
+            end
+          end
+
+          describe "a command that doesn't exist" do
+            let :key, do: "not_exists"
+
+            it "returns a 404" do
+              expect(response().status) |> to(eq 404)
+            end
+
+            it "returns an error message" do
+              expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+            end
+          end
+        end
+
+        describe "a device that doesn't exist" do
+          let :device, do: "not_exists"
+
+          it "returns a 404" do
+            expect(response().status) |> to(eq 404)
+          end
+
+          it "returns an error message" do
+            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+          end
+        end
+      end
+
+      describe "bus that is not registered" do
+        let :bus, do: "foo"
+
+        it "returns a 404" do
+          expect(response().status) |> to(eq 404)
+        end
+
+        it "returns an error message" do
+          expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+        end
+      end
+    end
+
+    describe "/:bus/:device/start" do
+      let :bus, do: "test"
+      let :device, do: "exists"
+      let :key, do: "exists"
+
+      let :response, do: conn(:put, "/#{bus()}/#{device()}/start", "{\"key\":\"#{key()}\"}")
+        |> put_req_header("content-type", "application/json")
+        |> Router.call([])
+
+      describe "bus that is registered" do
+        let :bus, do: "test"
+
+        describe "a device that is registered" do
+          let :device, do: "exists"
+
+          describe "a command that exists" do
+            let :key, do: "exists"
+
+            it "returns a 200" do
+              expect(response().status) |> to(eq 200)
+            end
+          end
+
+          describe "a command that doesn't exist" do
+            let :key, do: "not_exists"
+
+            it "returns a 404" do
+              expect(response().status) |> to(eq 404)
+            end
+
+            it "returns an error message" do
+              expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+            end
+          end
+        end
+
+        describe "a device that doesn't exist" do
+          let :device, do: "not_exists"
+
+          it "returns a 404" do
+            expect(response().status) |> to(eq 404)
+          end
+
+          it "returns an error message" do
+            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+          end
+        end
+      end
+
+      describe "bus that is not registered" do
+        let :bus, do: "foo"
+
+        it "returns a 404" do
+          expect(response().status) |> to(eq 404)
+        end
+
+        it "returns an error message" do
+          expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+        end
+      end
+    end
+
+    describe "/:bus/:device/stop" do
+      let :bus, do: "test"
+      let :device, do: "exists"
+      let :key, do: "exists"
+
+      let :response, do: conn(:put, "/#{bus()}/#{device()}/stop", "{\"key\":\"#{key()}\"}")
+        |> put_req_header("content-type", "application/json")
+        |> Router.call([])
+
+      describe "bus that is registered" do
+        let :bus, do: "test"
+
+        describe "a device that is registered" do
+          let :device, do: "exists"
+
+          describe "a command that exists" do
+            let :key, do: "exists"
+
+            it "returns a 200" do
+              expect(response().status) |> to(eq 200)
+            end
+          end
+
+          describe "a command that doesn't exist" do
+            let :key, do: "not_exists"
+
+            it "returns a 404" do
+              expect(response().status) |> to(eq 404)
+            end
+
+            it "returns an error message" do
+              expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+            end
+          end
+        end
+
+        describe "a device that doesn't exist" do
+          let :device, do: "not_exists"
+
+          it "returns a 404" do
+            expect(response().status) |> to(eq 404)
+          end
+
+          it "returns an error message" do
+            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+          end
+        end
+      end
+
+      describe "bus that is not registered" do
+        let :bus, do: "foo"
+
+        it "returns a 404" do
+          expect(response().status) |> to(eq 404)
+        end
+
+        it "returns an error message" do
+          expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+        end
+      end
+    end
   end
 end

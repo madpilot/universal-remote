@@ -42,7 +42,7 @@ defmodule Server.Web.Remotes.Router do
   end
 
   put "/:bus/:device/send" do
-    %{key: key} = conn.body_params
+    %{"key" => key} = conn.body_params
 
     with {:ok, module} <- Remotes.get(bus |> String.to_atom),
          {:ok} <- module.send_once(device |> String.to_atom, key |> String.to_atom)
@@ -51,13 +51,13 @@ defmodule Server.Web.Remotes.Router do
     else
       {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
-      {:unknown_key} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_command} -> send_json(conn, 404, %{error: "Not Found"})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
 
   put "/:bus/:device/start" do
-    %{key: key} = conn.body_params
+    %{"key" => key} = conn.body_params
 
     with {:ok, module} <- Remotes.get(bus |> String.to_atom),
          {:ok} <- module.send_start(device |> String.to_atom, key |> String.to_atom)
@@ -66,13 +66,13 @@ defmodule Server.Web.Remotes.Router do
     else
       {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
-      {:unknown_key} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_command} -> send_json(conn, 404, %{error: "Not Found"})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
 
   put "/:bus/:device/stop" do
-    %{key: key} = conn.body_params
+    %{"key" => key} = conn.body_params
 
     with {:ok, module} <- Remotes.get(bus |> String.to_atom),
          {:ok} <- module.send_stop(device |> String.to_atom, key |> String.to_atom)
@@ -81,7 +81,7 @@ defmodule Server.Web.Remotes.Router do
     else
       {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
-      {:unknown_key} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_command} -> send_json(conn, 404, %{error: "Not Found"})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
