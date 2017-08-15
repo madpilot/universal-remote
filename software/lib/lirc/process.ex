@@ -16,7 +16,7 @@ defmodule LIRC.Process do
     case Regex.run(~r/unknown (command|remote)/, body) do
       [_, "remote"] -> {:reply, {:unknown_remote}, state}
       [_, "command"] -> {:reply, {:unknown_command}, state}
-      _ -> {:replay, {:error}, state}
+      _ -> {:reply, {:error}, state}
     end
   end
 
