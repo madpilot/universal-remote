@@ -3,7 +3,7 @@
 /db
 /deps
 /*.ez
-
+/priv
 # Generated on crash by the VM
 erl_crash.dump
 

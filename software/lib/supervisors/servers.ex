@@ -2,12 +2,13 @@ defmodule Supervisors.Servers do
   use Supervisor
 
   def start_link() do
-    Supervisor.start_link(__MODULE__, %{}, [name: __MODULE__])
+    {:ok, config} = Application.fetch_env(:universal_remote, :servers)
+    Supervisor.start_link(__MODULE__, config, [name: __MODULE__])
   end
 
-  def init(_) do
+  def init(config) do
     children = [
-      Plug.Adapters.Cowboy.child_spec(:http, Server.Web.Router, [], [port: 4001])
+      Plug.Adapters.Cowboy.child_spec(:https, Server.Web.Router, [], config[:web])
     ]
     supervise(children, strategy: :one_for_one)
   end

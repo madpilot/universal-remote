@@ -10,6 +10,28 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+config :universal_remote,
+  :servers,
+    web: [
+      port: 4001,
+      otp_app: :universal_remote,
+      keyfile: "priv/ssl/key.pem",
+      certfile: "priv/ssl/cert.pem"
+    ]
+
+config :universal_remote,
+  :buses,
+    modules: [
+      CEC.Supervisor,
+      LIRC.Supervisor
+    ]
+
+config :universal_remote,
+  remotes: %{
+    cec: CEC.Remote,
+    lirc: LIRC.Remote
+  }
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

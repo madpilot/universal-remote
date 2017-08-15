@@ -7,8 +7,10 @@ defmodule UniversalRemote do
     import Supervisor.Spec
 
     # Define workers and child supervisors to be supervised
+    {:ok, remotes} = Application.fetch_env(:universal_remote, :remotes)
+
     children = [
-      worker(Remotes, [%{:cec => CEC.Remote, :lirc => LIRC.Remote}]),
+      worker(Remotes, [remotes]),
       supervisor(Supervisors.Buses, []),
       supervisor(Supervisors.Servers, [])
     ]
