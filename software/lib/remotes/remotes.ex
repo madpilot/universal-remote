@@ -1,5 +1,6 @@
 defmodule Remotes do
   use GenServer
+  require Logger
 
   def start_link(initial = %{}) do
     GenServer.start_link(__MODULE__, initial, [name: __MODULE__])
@@ -10,6 +11,7 @@ defmodule Remotes do
   end
 
   def register(name, module) do
+
     GenServer.call(__MODULE__, {:register, name, module})
   end
 
@@ -30,10 +32,12 @@ defmodule Remotes do
   end
 
   def handle_call({:register, name, module}, _from, state) do
+    Logger.info "Remotes - Registering #{inspect module} as #{name}"
     {:reply, {:ok}, state |> Map.merge(%{name => module})}
   end
 
   def handle_call({:deregister, name}, _from, state) do
+    Logger.info "Remotes - Deregistering #{name}"
     {:reply, {:ok}, state |> Map.delete(name)}
   end
 
