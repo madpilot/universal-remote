@@ -12,31 +12,6 @@ defmodule LIRC.Process do
     {:ok, state |> Map.merge(%{port: port, irsend: irsend})}
   end
 
-  def handle_info({_, {:data, {:eol, line}}}, state) do
-    GenServer.cast(LIRC.Producer, {:lirc, line})
-    {:noreply, state}
-  end
-
-
-  def handle_call({:list_devices}, _from, state) do
-    Logger.debug "LIRC - Listing devices"
-    {output, exit_code} = System.cmd(state[:irsend], ["list", "", ""])
-
-    case exit_code do
-      0 -> (
-        devices = output
-          |> String.split("\n", trim: true)
-          |> Enum.map(fn(line) ->
-            case Regex.run(~r/^irsend: (.+)$/, line) do
-              [_, device] -> device |> String.to_atom
-            end
-          end)
-
-        {:reply, {:ok, devices}, state}
-      )
-    end
-  end
-
   defp exec_error(body, state) do
     case Regex.run(~r/unknown (command|remote)/, body) do
       [_, "remote"] -> {:reply, {:unknown_remote}, state}
@@ -58,6 +33,30 @@ defmodule LIRC.Process do
     case exit_code do
       0 -> {:reply, {:ok}, state}
       1 -> exec_error(body, state)
+    end
+  end
+
+  def handle_info({_, {:data, {:eol, line}}}, state) do
+    GenServer.cast(LIRC.Producer, {:lirc, line})
+    {:noreply, state}
+  end
+
+  def handle_call({:list_devices}, _from, state) do
+    Logger.debug "LIRC - Listing devices"
+    {output, exit_code} = System.cmd(state[:irsend], ["list", "", ""])
+
+    case exit_code do
+      0 -> (
+        devices = output
+          |> String.split("\n", trim: true)
+          |> Enum.map(fn(line) ->
+            case Regex.run(~r/^irsend: (.+)$/, line) do
+              [_, device] -> device |> String.to_atom
+            end
+          end)
+
+        {:reply, {:ok, devices}, state}
+      )
     end
   end
 
