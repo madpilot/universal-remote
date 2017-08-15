@@ -1,5 +1,6 @@
 defmodule LIRC.Process do
   use GenServer
+  require Logger
 
   def start_link() do
     GenServer.start_link(__MODULE__, %{}, [name: __MODULE__])
@@ -18,6 +19,7 @@ defmodule LIRC.Process do
 
 
   def handle_call({:list_devices}, _from, state) do
+    Logger.debug "LIRC - Listing devices"
     {output, exit_code} = System.cmd(state[:irsend], ["list", "", ""])
 
     case exit_code do
@@ -60,6 +62,7 @@ defmodule LIRC.Process do
   end
 
   def handle_call({:list_commands, device}, _from, state) do
+    Logger.debug "LIRC - Listing commands for #{device}"
     device_string = device
        |> Atom.to_string
 
@@ -82,14 +85,17 @@ defmodule LIRC.Process do
   end
 
   def handle_call({:send_once, device, key}, from, state) do
+    Logger.debug "LIRC - Sending #{key} to #{device}"
     exec_command(device, key, "send_once", from, state)
   end
 
   def handle_call({:send_start, device, key}, from, state) do
+    Logger.debug "LIRC - Sending start #{key} to #{device}"
     exec_command(device, key, "send_start", from, state)
   end
 
   def handle_call({:send_stop, device, key}, from, state) do
+    Logger.debug "LIRC - Sending stop #{key} to #{device}"
     exec_command(device, key, "send_stop", from, state)
   end
 

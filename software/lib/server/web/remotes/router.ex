@@ -1,6 +1,7 @@
 defmodule Server.Web.Remotes.Router do
   use Plug.Router
 
+  plug Plug.Logger, log: :info
   plug :match
   plug Plug.Parsers, parsers: [:json],
                      pass:  ["application/json"],

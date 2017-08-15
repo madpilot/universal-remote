@@ -1,6 +1,7 @@
 defmodule CEC.Parsers.Parser do
   alias CEC.Mapping.{Source, Destination, OpCodes}
   alias CEC.Parsers.{Arguments}
+  require Logger
 
   use Bitwise, only_operators: true
 
@@ -71,9 +72,12 @@ defmodule CEC.Parsers.Parser do
   end
 
   def from_code(code) do
-    code
+    response = code
     |> String.trim
     |> String.split(":")
     |> process
+
+    Logger.debug "CEC - Parsed: #{inspect response}"
+    response
   end
 end

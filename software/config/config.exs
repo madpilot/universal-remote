@@ -6,9 +6,14 @@
 use Mix.Config
 
 # Configures Elixir's Logger
+config :logger,
+  backends: [:console]
+
 config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  colors: [enabled: true],
+  format: "[$level] $message\n",
+  level: :info,
+  utc_log: true
 
 config :universal_remote,
   :servers,

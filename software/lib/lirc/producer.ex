@@ -1,5 +1,6 @@
 defmodule LIRC.Producer do
   use GenStage
+  require Logger
 
   def start_link() do
     GenStage.start_link(__MODULE__, :ok, [name: __MODULE__])
@@ -10,10 +11,12 @@ defmodule LIRC.Producer do
   end
 
   defp build_packet(command, device) do
-    %{command: command  |> String.downcase |> String.to_atom,
+    packet = %{command: command  |> String.downcase |> String.to_atom,
       destination: device |> String.to_atom,
       source: nil,
       bus: :lirc}
+    Logger.debug "LIRC - Received #{inspect packet}"
+    packet
   end
 
   defp parse_line(data) do

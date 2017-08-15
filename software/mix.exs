@@ -31,6 +31,7 @@ defmodule UniversalRemote.Mixfile do
   defp deps do
     [
       {:gen_stage, "~> 0.11"},
+      {:conform, "~> 2.2"},
       {:cowboy, "~> 1.0"},
       {:apex, "~>1.0.0", only: [:dev,:test]},
       {:espec, "~> 1.4.5", only: :test},

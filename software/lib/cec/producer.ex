@@ -1,5 +1,6 @@
 defmodule CEC.Producer do
   use GenStage
+  require Logger
 
   def start_link() do
     GenStage.start_link(__MODULE__, :ok, [name: __MODULE__])
@@ -10,6 +11,7 @@ defmodule CEC.Producer do
   end
 
   defp map_code(code) do
+    Logger.debug "CEC - Received #{code}"
     CEC.Parsers.Parser.from_code(code)
   end
 

@@ -14,4 +14,4 @@ config :universal_remote, LIRC.Process,
   irw: Path.expand("#{__DIR__}/../spec/fake/irw")
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+config :logger, :console, level: :debug

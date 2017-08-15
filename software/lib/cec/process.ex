@@ -1,5 +1,6 @@
 defmodule CEC.Process do
   use GenServer
+  require Logger
 
   def start_link() do
     GenServer.start_link(__MODULE__, %{}, [name: __MODULE__])
@@ -17,6 +18,7 @@ defmodule CEC.Process do
   end
 
   def handle_call({:send_code, code}, _from, state) do
+    Logger.debug "CEC - Sending #{code}"
     state[:port]
     |> send({self(), {:command, "tx #{code}\n"}})
     {:reply, {:ok}, state}
