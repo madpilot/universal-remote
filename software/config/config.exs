@@ -32,6 +32,11 @@ config :universal_remote,
     ]
 
 config :universal_remote,
+  devices: %{
+    foxtel: "priv/devices/foxtel.exs"
+  }
+
+config :universal_remote,
   remotes: %{
     cec: CEC.Remote,
     lirc: LIRC.Remote

@@ -8,9 +8,11 @@ defmodule UniversalRemote do
 
     # Define workers and child supervisors to be supervised
     {:ok, remotes} = Application.fetch_env(:universal_remote, :remotes)
+    {:ok, devices} = Application.fetch_env(:universal_remote, :devices)
 
     children = [
       worker(Remotes, [remotes]),
+      worker(Devices, [devices]),
       supervisor(Supervisors.Buses, []),
       supervisor(Supervisors.Servers, [])
     ]
