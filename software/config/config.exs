@@ -18,10 +18,14 @@ config :logger, :console,
 config :universal_remote,
   :servers,
     web: [
-      port: 4001,
-      otp_app: :universal_remote,
-      keyfile: "priv/ssl/key.pem",
-      certfile: "priv/ssl/cert.pem"
+      enabled: true,
+      scheme: :https,
+      options: [
+        ip: "0.0.0.0",
+        port: 4001,
+        keyfile: "priv/ssl/key.pem",
+        certfile: "priv/ssl/cert.pem"
+      ]
     ]
 
 config :universal_remote,
