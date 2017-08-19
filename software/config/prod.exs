@@ -6,3 +6,9 @@ config :universal_remote, CEC.Process,
 config :universal_remote, LIRC.Process,
   irsend: Path.expand("/usr/bin/irsend"),
   irw: Path.expand("/usr/bin/irw")
+
+config :universal_remote,
+  :servers,
+    web: [
+      port: 80
+    ]

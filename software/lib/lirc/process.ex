@@ -8,6 +8,9 @@ defmodule LIRC.Process do
 
   def init(state) do
     [irsend: irsend, irw: irw] = Application.get_env(:universal_remote, LIRC.Process)
+    Logger.info "Starting irw"
+    Logger.debug "irw: #{irw}"
+    Logger.debug "irsend: #{irsend}"
     port = Port.open({:spawn_executable, irw}, [:line, :binary])
     {:ok, state |> Map.merge(%{port: port, irsend: irsend})}
   end
@@ -28,7 +31,7 @@ defmodule LIRC.Process do
       |> Atom.to_string
       |> String.upcase
 
-    {body, exit_code} = System.cmd(state[:irsend], [send_state, device_string, key_string])
+    {body, exit_code} = System.cmd(state[:irsend], [send_state, device_string, key_string], [stderr_to_stdout: true])
 
     case exit_code do
       0 -> {:reply, {:ok}, state}
@@ -43,7 +46,7 @@ defmodule LIRC.Process do
 
   def handle_call({:list_devices}, _from, state) do
     Logger.debug "LIRC - Listing devices"
-    {output, exit_code} = System.cmd(state[:irsend], ["list", "", ""])
+    {output, exit_code} = System.cmd(state[:irsend], ["list", "", ""], [stderr_to_stdout: true])
 
     case exit_code do
       0 -> (
@@ -65,7 +68,7 @@ defmodule LIRC.Process do
     device_string = device
        |> Atom.to_string
 
-    {output, exit_code} = System.cmd(state[:irsend], ["list", device_string, ""])
+    {output, exit_code} = System.cmd(state[:irsend], ["list", device_string, ""], [stderr_to_stdout: true])
 
     case exit_code do
       0 -> (
@@ -116,5 +119,14 @@ defmodule LIRC.Process do
 
   def send_stop(device, command) do
     GenServer.call(LIRC.Process, {:send_stop, device, command})
+  end
+
+  def terminate(_reason, state) do
+    Logger.debug "Killing irw"
+    # Do this better...
+    # We should setup a link. See: https://hexdocs.pm/elixir/GenServer.html#c:terminate/2
+    {:os_pid, pid} = Port.info(state[:port], :os_pid)
+    Port.close(state[:port])
+    System.cmd("kill", [pid])
   end
 end

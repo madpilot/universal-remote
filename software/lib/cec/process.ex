@@ -8,6 +8,8 @@ defmodule CEC.Process do
 
   def init(state) do
     [executable: executable] = Application.get_env(:universal_remote, CEC.Process)
+    Logger.info "Starting cec-client"
+    Logger.debug "cec-client: #{executable}"
     port = Port.open({:spawn_executable, executable}, [:line, :binary])
     {:ok, state |> Map.merge(%{port: port})}
   end
@@ -26,5 +28,13 @@ defmodule CEC.Process do
 
   def send_code(code) do
     GenServer.call(CEC.Process, {:send_code, code})
+  end
+
+  def terminate(_reason, state) do
+    Logger.debug "Killing cec-client"
+    # Do this better...
+    {:os_pid, pid} = Port.info(state[:port], :os_pid)
+    Port.close(state[:port])
+    System.cmd("kill", [pid])
   end
 end
