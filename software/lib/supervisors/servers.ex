@@ -2,9 +2,23 @@ defmodule Supervisors.Servers do
   use Supervisor
   require Logger
 
-  defp cowboy_config(config) do
-    config
-    |> List.insert_at(0, {:otp_app, :universal_remote})
+  defp web(children, config) do
+    case config[:enabled] do
+      true -> (
+        scheme = config[:scheme]
+        ip = config[:options][:ip]
+             |> Tuple.to_list
+             |> Enum.join(".")
+        port = config[:options][:port]
+
+        options = config[:options]
+                  |> List.insert_at(0, {:otp_app, :universal_remote})
+
+        Logger.info "Servers - Initializing web server #{scheme}://#{ip}:#{port}/"
+        [Plug.Adapters.Cowboy.child_spec(scheme, Server.Web.Router, [], options) | children ]
+      )
+      false -> children
+    end
   end
 
   def start_link() do
@@ -13,10 +27,9 @@ defmodule Supervisors.Servers do
   end
 
   def init(config) do
-    children = [
-      Plug.Adapters.Cowboy.child_spec(config[:web][:scheme], Server.Web.Router, [], cowboy_config(config[:web][:options]))
-    ]
-    Logger.info "Servers - Initializing web server on port #{config[:web][:port]}"
+    children = []
+    |> web(config[:web])
+
     supervise(children, strategy: :one_for_one)
   end
 end

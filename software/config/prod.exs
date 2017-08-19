@@ -10,6 +10,5 @@ config :universal_remote, LIRC.Process,
 config :universal_remote,
   :servers,
     web: [
-      port: 80,
-      otp_app: :universal_remote
+      port: 80
     ]
