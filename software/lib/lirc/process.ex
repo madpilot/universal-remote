@@ -28,7 +28,7 @@ defmodule LIRC.Process do
       |> Atom.to_string
       |> String.upcase
 
-    {body, exit_code} = System.cmd(state[:irsend], [send_state, device_string, key_string])
+    {body, exit_code} = System.cmd(state[:irsend], [send_state, device_string, key_string], [stderr_to_stdout: true])
 
     case exit_code do
       0 -> {:reply, {:ok}, state}
@@ -43,7 +43,7 @@ defmodule LIRC.Process do
 
   def handle_call({:list_devices}, _from, state) do
     Logger.debug "LIRC - Listing devices"
-    {output, exit_code} = System.cmd(state[:irsend], ["list", "", ""])
+    {output, exit_code} = System.cmd(state[:irsend], ["list", "", ""], [stderr_to_stdout: true])
 
     case exit_code do
       0 -> (
@@ -65,7 +65,7 @@ defmodule LIRC.Process do
     device_string = device
        |> Atom.to_string
 
-    {output, exit_code} = System.cmd(state[:irsend], ["list", device_string, ""])
+    {output, exit_code} = System.cmd(state[:irsend], ["list", device_string, ""], [stderr_to_stdout: true])
 
     case exit_code do
       0 -> (
@@ -96,6 +96,11 @@ defmodule LIRC.Process do
   def handle_call({:send_stop, device, key}, from, state) do
     Logger.debug "LIRC - Sending stop #{key} to #{device}"
     exec_command(device, key, "send_stop", from, state)
+  end
+
+  def terminate(_reason, state) do
+    Logger.debug "LIRC - kill irw"
+    Apex.ap state
   end
 
   def list_devices() do
