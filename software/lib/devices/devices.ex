@@ -1,4 +1,4 @@
-defmodule Devices do
+ defmodule Devices do
   use GenServer
   require Logger
 

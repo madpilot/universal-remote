@@ -12,6 +12,15 @@ defmodule DevicesSpec do
       it "sets the initial state" do
         expect(subject()) |> to(eq {:ok, initial()})
       end
+
+      context "non-empty initial state" do
+        let :path, do: "spec/fixtures/test_device.exs"
+        let :initial, do: %{test: path()}
+
+        it "should attempt to load the file" do
+          subject()
+        end
+      end
     end
 
     describe "register" do
@@ -88,6 +97,26 @@ defmodule DevicesSpec do
         expect(subject()) |> to(eq %{cec: CEC.Remote})
       end
     end
+
+    describe "send" do
+      subject do: GenServer.call(pid(), {:send, :test, :power_on})
+      describe "module exists" do
+        let :initial, do: %{}
+        before do: GenServer.call(pid(), {:register, :test, TestDevice})
+
+        it "returns ok" do
+          expect(subject()) |> to(eq {:ok})
+        end
+      end
+
+      describe "module does not exist" do
+        let :initial, do: %{}
+
+        it "returns unknown_device" do
+          expect(subject()) |> to(eq {:unknown_device})
+        end
+      end
+    end
   end
 
   describe "Proxy methods" do
@@ -153,6 +182,18 @@ defmodule DevicesSpec do
         it "calls list via GenServer" do
           subject()
           expect(GenServer) |> to(accepted :call, [Devices, {:list}])
+        end
+      end
+
+      describe "send" do
+        let :name, do: :name
+        let :command, do: :power_on
+        before do: Devices.start_link(initial())
+        subject do: Devices.send(name(), command())
+
+        it "calls send via GenServer" do
+          subject()
+          expect(GenServer) |> to(accepted :call, [Devices, {:send, name(), command()}])
         end
       end
     end
