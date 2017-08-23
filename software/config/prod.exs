@@ -10,5 +10,12 @@ config :universal_remote, LIRC.Process,
 config :universal_remote,
   :servers,
     web: [
-      port: 80
+      enabled: true,
+      scheme: :https,
+      options: [
+        ip: {0, 0, 0, 0},
+        port: 443,
+        keyfile: "priv/ssl/key.pem",
+        certfile: "priv/ssl/cert.pem"
+      ]
     ]

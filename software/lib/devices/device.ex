@@ -9,7 +9,7 @@ defmodule Device do
 
   defmacro command(command, do: block) do
     quote do
-      @commands [unquote(command)]
+      @commands [unquote(command) | @commands]
       def unquote(command)(), do: unquote(block)
     end
   end
