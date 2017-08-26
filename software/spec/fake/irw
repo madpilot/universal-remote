@@ -20,6 +20,7 @@ echo "000000000000001c 00 KEY_DOWN foxtel"
 echo "000000000000001b 00 KEY_UP foxtel"
 echo "000000000000001b 00 KEY_UP foxtel"
 echo "000000000000001b 00 KEY_UP foxtel"
+echo "000000000000001b 00 KEY_VOLUMEUP receiver"
 
 while [ 1 ]; do
    read input

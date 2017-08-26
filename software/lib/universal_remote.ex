@@ -9,12 +9,14 @@ defmodule UniversalRemote do
     # Define workers and child supervisors to be supervised
     {:ok, remotes} = Application.fetch_env(:universal_remote, :remotes)
     {:ok, devices} = Application.fetch_env(:universal_remote, :devices)
+    {:ok, handlers} = Application.fetch_env(:universal_remote, :handlers)
 
     children = [
       worker(Remotes, [remotes]),
       worker(Devices, [devices]),
       supervisor(Supervisors.Buses, []),
-      supervisor(Supervisors.Servers, [])
+      supervisor(Supervisors.Servers, []),
+      supervisor(Handlers, [handlers]),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
