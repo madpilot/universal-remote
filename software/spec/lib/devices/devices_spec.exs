@@ -98,8 +98,48 @@ defmodule DevicesSpec do
       end
     end
 
-    describe "send" do
-      subject do: GenServer.call(pid(), {:send, :test, :power_on})
+    describe "send_once" do
+      subject do: GenServer.call(pid(), {:send_once, :test, :power_on})
+      describe "module exists" do
+        let :initial, do: %{}
+        before do: GenServer.call(pid(), {:register, :test, TestDevice})
+
+        it "returns ok" do
+          expect(subject()) |> to(eq {:ok})
+        end
+      end
+
+      describe "module does not exist" do
+        let :initial, do: %{}
+
+        it "returns unknown_device" do
+          expect(subject()) |> to(eq {:unknown_device})
+        end
+      end
+    end
+
+    describe "send_start" do
+      subject do: GenServer.call(pid(), {:send_start, :test, :power_on})
+      describe "module exists" do
+        let :initial, do: %{}
+        before do: GenServer.call(pid(), {:register, :test, TestDevice})
+
+        it "returns ok" do
+          expect(subject()) |> to(eq {:ok})
+        end
+      end
+
+      describe "module does not exist" do
+        let :initial, do: %{}
+
+        it "returns unknown_device" do
+          expect(subject()) |> to(eq {:unknown_device})
+        end
+      end
+    end
+
+    describe "send_stop" do
+      subject do: GenServer.call(pid(), {:send_stop, :test, :power_on})
       describe "module exists" do
         let :initial, do: %{}
         before do: GenServer.call(pid(), {:register, :test, TestDevice})
@@ -185,15 +225,39 @@ defmodule DevicesSpec do
         end
       end
 
-      describe "send" do
+      describe "send_once" do
         let :name, do: :name
         let :command, do: :power_on
         before do: Devices.start_link(initial())
-        subject do: Devices.send(name(), command())
+        subject do: Devices.send_once(name(), command())
 
         it "calls send via GenServer" do
           subject()
-          expect(GenServer) |> to(accepted :call, [Devices, {:send, name(), command()}])
+          expect(GenServer) |> to(accepted :call, [Devices, {:send_once, name(), command()}])
+        end
+      end
+
+      describe "send_start" do
+        let :name, do: :name
+        let :command, do: :power_on
+        before do: Devices.start_link(initial())
+        subject do: Devices.send_start(name(), command())
+
+        it "calls send via GenServer" do
+          subject()
+          expect(GenServer) |> to(accepted :call, [Devices, {:send_start, name(), command()}])
+        end
+      end
+
+      describe "send_stop" do
+        let :name, do: :name
+        let :command, do: :power_on
+        before do: Devices.start_link(initial())
+        subject do: Devices.send_stop(name(), command())
+
+        it "calls send via GenServer" do
+          subject()
+          expect(GenServer) |> to(accepted :call, [Devices, {:send_stop, name(), command()}])
         end
       end
     end

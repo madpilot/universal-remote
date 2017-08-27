@@ -36,8 +36,16 @@
     GenServer.call(__MODULE__, {:list})
   end
 
-  def send(name, command) do
-    GenServer.call(__MODULE__, {:send, name, command})
+  def send_once(name, command) do
+    GenServer.call(__MODULE__, {:send_once, name, command})
+  end
+
+  def send_start(name, command) do
+    GenServer.call(__MODULE__, {:send_start, name, command})
+  end
+
+  def send_stop(name, command) do
+    GenServer.call(__MODULE__, {:send_stop, name, command})
   end
 
   def handle_call({:register, name, module}, _from, state) do
@@ -68,15 +76,27 @@
     {:reply, state, state}
   end
 
-  def handle_call({:send, name, command}, _from, state) do
+  defp handle_command({type, name, command}, _from, state) do
     case state do
       %{^name => module} -> (
         case module.commands |> Enum.any?(fn(k) -> k == command end) do
-          true -> {:reply, apply(module, command, []), state}
+          true -> {:reply, apply(module, command, [type]), state}
           false -> {:reply, {:unknown_command}, state}
         end
       )
       _ -> {:reply, {:unknown_device}, state}
     end
+  end
+
+  def handle_call({:send_once, name, command}, from, state) do
+    handle_command({:send_once, name, command}, from, state)
+  end
+
+  def handle_call({:send_start, name, command}, from, state) do
+    handle_command({:send_start, name, command}, from, state)
+  end
+
+  def handle_call({:send_stop, name, command}, from, state) do
+    handle_command({:send_stop, name, command}, from, state)
   end
 end

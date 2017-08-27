@@ -7,10 +7,11 @@ defmodule Device do
     end
   end
 
-  defmacro command(command, do: block) do
+  defmacro command(command, allowed \\ [:send_start, :send_stop], do: block) do
     quote do
       @commands [unquote(command) | @commands]
-      def unquote(command)(), do: unquote(block)
+      def unquote(command)(type) when type in unquote(allowed), do: unquote(block)
+      def unquote(command)(type), do: {:ok} # Fall out the bottom
     end
   end
 
