@@ -31,7 +31,7 @@ defmodule Server.Web.Devices.RouterSpec do
         end
 
         it "returns a list of commands" do
-          expect(response().resp_body |> Poison.decode!) |> to(eq(["power_on"]))
+          expect(response().resp_body |> Poison.decode! |> Enum.sort) |> to(eq(["key_power_on", "key_power_off", "key_standby", "key_volumedown", "key_volumeup"] |> Enum.sort))
         end
       end
 
@@ -50,7 +50,7 @@ defmodule Server.Web.Devices.RouterSpec do
 
     describe "/:device/send" do
       let :device, do: "test_device"
-      let :command, do: "power_on"
+      let :command, do: "key_power_on"
 
       let :response, do: conn(:put, "/#{device()}/send", "{\"command\":\"#{command()}\"}")
         |> put_req_header("content-type", "application/json")
@@ -60,7 +60,97 @@ defmodule Server.Web.Devices.RouterSpec do
         let :device, do: "test_device"
 
         describe "a command that exists" do
-          let :command, do: "power_on"
+          let :command, do: "key_power_on"
+
+          it "returns a 200" do
+            expect(response().status) |> to(eq 200)
+          end
+        end
+
+        describe "a command that doesn't exist" do
+          let :command, do: "not_exists"
+
+          it "returns a 404" do
+            expect(response().status) |> to(eq 404)
+          end
+
+          it "returns an error message" do
+            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+          end
+        end
+      end
+
+      describe "a device that doesn't exist" do
+        let :device, do: "not_exists"
+
+        it "returns a 404" do
+          expect(response().status) |> to(eq 404)
+        end
+
+        it "returns an error message" do
+          expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+        end
+      end
+    end
+
+    describe "/:device/start" do
+      let :device, do: "test_device"
+      let :command, do: "key_power_on"
+
+      let :response, do: conn(:put, "/#{device()}/start", "{\"command\":\"#{command()}\"}")
+        |> put_req_header("content-type", "application/json")
+        |> Router.call([])
+
+      describe "a device that is registered" do
+        let :device, do: "test_device"
+
+        describe "a command that exists" do
+          let :command, do: "key_power_on"
+
+          it "returns a 200" do
+            expect(response().status) |> to(eq 200)
+          end
+        end
+
+        describe "a command that doesn't exist" do
+          let :command, do: "not_exists"
+
+          it "returns a 404" do
+            expect(response().status) |> to(eq 404)
+          end
+
+          it "returns an error message" do
+            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+          end
+        end
+      end
+
+      describe "a device that doesn't exist" do
+        let :device, do: "not_exists"
+
+        it "returns a 404" do
+          expect(response().status) |> to(eq 404)
+        end
+
+        it "returns an error message" do
+          expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+        end
+      end
+    end
+
+    describe "/:device/stop" do
+      let :device, do: "test_device"
+      let :command, do: "key_power_on"
+
+      let :response, do: conn(:put, "/#{device()}/start", "{\"command\":\"#{command()}\"}")
+        |> put_req_header("content-type", "application/json")
+        |> Router.call([])
+
+      describe "a device that is registered" do
+        let :device, do: "test_device"
+
+        describe "a command that exists" do
+          let :command, do: "key_power_on"
 
           it "returns a 200" do
             expect(response().status) |> to(eq 200)

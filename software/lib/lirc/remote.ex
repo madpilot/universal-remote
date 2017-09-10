@@ -22,4 +22,12 @@ defmodule LIRC.Remote do
   def send_stop(device, key) do
     Process.send_stop(device, key)
   end
+
+  def send(type, device, key) do
+    case type do
+      :send_once -> send_once(device, key)
+      :send_start -> send_start(device, key)
+      :send_stop -> send_stop(device, key)
+    end
+  end
 end

@@ -99,13 +99,13 @@ defmodule DevicesSpec do
     end
 
     describe "send_once" do
-      subject do: GenServer.call(pid(), {:send_once, :test, :power_on})
+      subject do: GenServer.call(pid(), {:send_once, :test, :key_power_on})
       describe "module exists" do
         let :initial, do: %{}
         before do: GenServer.call(pid(), {:register, :test, TestDevice})
 
         it "returns ok" do
-          expect(subject()) |> to(eq {:ok})
+          expect(subject()) |> to(eq {:ok, :send_once})
         end
       end
 
@@ -119,13 +119,13 @@ defmodule DevicesSpec do
     end
 
     describe "send_start" do
-      subject do: GenServer.call(pid(), {:send_start, :test, :power_on})
+      subject do: GenServer.call(pid(), {:send_start, :test, :key_power_on})
       describe "module exists" do
         let :initial, do: %{}
         before do: GenServer.call(pid(), {:register, :test, TestDevice})
 
         it "returns ok" do
-          expect(subject()) |> to(eq {:ok})
+          expect(subject()) |> to(eq {:ok, :send_start})
         end
       end
 
@@ -139,13 +139,13 @@ defmodule DevicesSpec do
     end
 
     describe "send_stop" do
-      subject do: GenServer.call(pid(), {:send_stop, :test, :power_on})
+      subject do: GenServer.call(pid(), {:send_stop, :test, :key_power_on})
       describe "module exists" do
         let :initial, do: %{}
         before do: GenServer.call(pid(), {:register, :test, TestDevice})
 
         it "returns ok" do
-          expect(subject()) |> to(eq {:ok})
+          expect(subject()) |> to(eq {:ok, :send_stop})
         end
       end
 
