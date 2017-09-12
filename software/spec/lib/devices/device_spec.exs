@@ -40,19 +40,11 @@ defmodule DeviceSpec do
 
     describe "passthrough" do
       context "to another device" do
-        it "calls the passed through function" do
-          allow TestDevice2 |> to(accept :key_volumeup)
-          TestDevice.key_volumeup(:send_start)
-          expect TestDevice2 |> to(accepted :key_volumeup, [:send_start])
-        end
+        it "calls the passed through function"
       end
 
       context "to a remote" do
-        it "calls the passed through action with the function name" do
-          allow Remotes.CEC |> to(accept :send_start)
-          TestDevice.key_volumedown(:send_start)
-          expect Remotes.CEC |> to(accepted :send_start, [:key_volumedown])
-        end
+        it "calls the passed through action with the function name"
       end
     end
   end

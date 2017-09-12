@@ -8,6 +8,6 @@ defmodule TestDevice2 do
   end
 
   command :key_volumedown do
-    send_start do: {:ok, :start, :key_volumedown}
+    on_send_start do: {:ok, :start, :key_volumedown}
   end
 end

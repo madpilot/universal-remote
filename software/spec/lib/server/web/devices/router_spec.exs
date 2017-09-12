@@ -13,7 +13,7 @@ defmodule Server.Web.Devices.RouterSpec do
       end
 
       it "returns a list of all the remotes registered" do
-        expect(response().resp_body |> Poison.decode!) |> to(eq(["test_device"]))
+        expect(response().resp_body |> Poison.decode!) |> to(eq(["test_device", "test_device_2"]))
       end
     end
 

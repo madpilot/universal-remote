@@ -9,7 +9,8 @@ config :universal_remote, LIRC.Process,
 
 config :universal_remote,
   devices: %{
-    test_device: "spec/fixtures/test_device.exs"
+    test_device: "spec/fixtures/test_device.exs",
+    test_device_2: "spec/fixtures/test_device_2.exs"
   }
 
 # Print only warnings and errors during test

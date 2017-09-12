@@ -7,19 +7,19 @@ defmodule Device do
     end
   end
 
-  defmacro send_start(do: block) do
+  defmacro on_send_start(do: block) do
     quote do
       [send_start: fn() -> unquote(block) end]
     end
   end
 
-  defmacro send_stop(do: block) do
+  defmacro on_send_stop(do: block) do
     quote do
       [send_stop: fn() -> unquote(block) end]
     end
   end
 
-  defmacro send_once(do: block) do
+  defmacro on_send_once(do: block) do
     quote do
       [send_once: fn() -> unquote(block) end]
     end
