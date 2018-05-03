@@ -30,7 +30,11 @@ defmodule Bus do
 
     completed = events
       |> Enum.map(fn(event) ->
-        reject_keys |> Enum.reduce(event, fn(e, x) -> e |> Map.delete(x) end)
+        reject_keys = event
+          |> Map.keys
+          |> Enum.reject(fn(x) ->
+            filter |> Map.keys |> Enum.member?(x)
+          end)
 
         case event |> Map.drop(reject_keys) do
           ^filter -> %{match: true, result: event}
@@ -42,7 +46,7 @@ defmodule Bus do
 
     case completed do
       nil -> {:noreply, [], state}
-      completed -> state |> Map.merge(completed)
+      completed -> {:noreply, [], state |> Map.merge(completed)}
     end
   end
 
@@ -60,8 +64,8 @@ defmodule Bus do
 
   def result(pid) do
     case GenStage.call(pid, {:complete}) do
-      {:timeout} -> raise "Timeout"
-      {:complete, res} -> res
+      {:timeout} -> {:error, "Timeout"}
+      {:complete, res} -> {:ok, res}
       _ -> result(pid)
     end
   end
