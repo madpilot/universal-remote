@@ -31,11 +31,11 @@ defmodule UniversalRemote.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:gen_stage, "~> 0.11"},
-      {:cowboy, "~> 1.0"},
-      {:apex, "~>1.0.0", only: [:dev,:test]},
-      {:espec, "~> 1.4.5", only: :test},
-      {:plug, "~> 1.4.3"},
+      {:gen_stage, "~> 0.13.1"},
+      {:cowboy, "~> 2.4.0"},
+      {:apex, "~>1.2.0", only: [:dev,:test]},
+      {:espec, "~> 1.5.1", only: :test},
+      {:plug, "~> 1.5.0"},
       {:poison, "~> 3.1"}]
   end
 end

@@ -9,7 +9,7 @@
   def init(files) do
     children = files
     |> Enum.map(fn(file) ->
-      case Code.load_file(file) do
+      case file |> elem(1) |> Code.load_file do
         [{module, _}] -> module
       end
     end)

@@ -2,7 +2,10 @@ defmodule Device do
   defmacro __using__(_opts) do
     quote do
       import Device
+
       @commands []
+      @statuses []
+
       @before_compile Device
     end
   end
@@ -48,6 +51,24 @@ defmodule Device do
     end
   end
 
+  defmacro status(status, do: block) do
+    quote do
+      @statuses [unquote(status) | @statuses]
+
+      def unquote(:"#{status}_status")() do
+        unquote(block)
+      end
+    end
+  end
+
+  defmacro listen(filter, do: block) do
+    quote do
+      def handle_event(unquote(filter)) do
+        unquote(block)
+      end
+    end
+  end
+
   defmacro passthrough(commands, [to: module, device: device]) do
     commands
     |> Enum.map(fn(command) ->
@@ -82,12 +103,45 @@ defmodule Device do
 
   defmacro __before_compile__(_env) do
     quote do
+      use GenStage
+
+      def start_link() do
+        GenStage.start_link(__MODULE__, :ok, name: __MODULE__)
+      end
+
+      def init(:ok) do
+        {:consumer, %{}, subscribe_to: [CEC.Producer, LIRC.Producer]}
+      end
+
+      def handle_events(events, _from, state) do
+        events
+        |> Enum.each(fn(event) -> handle_event(event) end)
+
+        {:noreply, [], state}
+      end
+
       def commands do
         @commands
       end
 
+      def statuses do
+        @statuses
+      end
+
       def wait(microseconds) do
         :timer.sleep(microseconds)
+      end
+
+      def handle_event(_) do
+        nil
+      end
+
+      def set_state(key, value) do
+        Devices.State.set_state(__MODULE__, key, value)
+      end
+
+      def get_state(key) do
+        Devices.State.get_state(__MODULE__, key)
       end
     end
   end
