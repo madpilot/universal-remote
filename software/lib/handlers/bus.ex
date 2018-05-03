@@ -5,7 +5,7 @@ defmodule Bus do
     state = %{filter: filter, match: false, result: nil, timeout: timeout }
     {:ok, pid} = GenStage.start_link(__MODULE__, state)
 
-    block
+    _ = block
 
     Bus.decrement_timer(pid)
     result = Bus.result(pid)
@@ -30,7 +30,9 @@ defmodule Bus do
 
     completed = events
       |> Enum.map(fn(event) ->
-        case event do
+        reject_keys |> Enum.reduce(event, fn(e, x) -> e |> Map.delete(x) end)
+
+        case event |> Map.drop(reject_keys) do
           ^filter -> %{match: true, result: event}
           _ -> %{match: false}
         end
