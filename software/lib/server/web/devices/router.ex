@@ -69,6 +69,17 @@ defmodule Server.Web.Devices.Router do
     end
   end
 
+  get "/:device/status" do
+    with {:ok, module} <- Devices.get(device |> String.to_atom),
+         list          <- module.statuses()
+    do
+      send_json(conn, 200, list)
+    else
+      {:unknown_device} -> send_json(conn, 404, %{error: "Not Found"})
+      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
+    end
+  end
+
   get "/:device/status/:status" do
     with {:ok, status} <- Devices.get_status(device |> String.to_atom, status |> String.to_atom)
     do

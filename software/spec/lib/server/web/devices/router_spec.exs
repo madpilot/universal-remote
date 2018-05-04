@@ -183,6 +183,36 @@ defmodule Server.Web.Devices.RouterSpec do
       end
     end
 
+    describe "/:device/status" do
+      let :device, do: "test_device"
+
+      let :response, do: conn(:get, "/#{device()}/status") |> Router.call([])
+
+      describe "a device that is registered" do
+        let :device, do: "test_device"
+
+        it "returns a 200" do
+          expect(response().status) |> to(eq 200)
+        end
+
+        it "returns a list of statuses" do
+          expect(response().resp_body |> Poison.decode! |> Enum.sort) |> to(eq(["volume", "mute"] |> Enum.sort))
+        end
+      end
+
+      describe "a device that is not registered" do
+        let :device, do: "not_exists"
+
+        it "returns a 404" do
+          expect(response().status) |> to(eq 404)
+        end
+
+        it "returns an error message" do
+          expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+        end
+      end
+    end
+
     describe "/:device/status/:status" do
       let :device, do: "test_device"
       let :status, do: "volume"
