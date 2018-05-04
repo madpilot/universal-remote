@@ -41,11 +41,6 @@ config :universal_remote,
   }
 
 config :universal_remote,
-  handlers: [
-    "priv/handlers/volume.exs"
-  ]
-
-config :universal_remote,
   remotes: %{
     cec: CEC.Remote,
     lirc: LIRC.Remote

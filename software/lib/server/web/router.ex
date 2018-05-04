@@ -1,8 +1,7 @@
-# There are three parts to the rest API:
+# There are two parts to the rest API:
 #
 # 1. The remote control: /remote
 # 2. Raw device commands /devices
-# 3. Websockets /ws
 
 defmodule Server.Web.Router do
   use Plug.Router
@@ -18,6 +17,6 @@ defmodule Server.Web.Router do
   forward "/devices", to: Server.Web.Devices.Router
 
   match _ do
-    send_resp(conn, 404, "oops")
+    send_resp(conn, 404, "Not Found")
   end
 end

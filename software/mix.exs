@@ -32,7 +32,7 @@ defmodule UniversalRemote.Mixfile do
   defp deps do
     [
       {:gen_stage, "~> 0.13.1"},
-      {:cowboy, "~> 2.4.0"},
+      {:cowboy, "~> 1.1.2"},
       {:apex, "~>1.2.0", only: [:dev,:test]},
       {:espec, "~> 1.5.1", only: :test},
       {:plug, "~> 1.5.0"},
