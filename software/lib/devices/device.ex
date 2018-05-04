@@ -110,6 +110,10 @@ defmodule Device do
       end
 
       def init(:ok) do
+        case :erlang.function_exported(__MODULE__, :setup, 0) do
+          false -> nil
+          true -> apply(__MODULE__, :setup, [])
+        end
         {:consumer, %{}, subscribe_to: [CEC.Producer, LIRC.Producer]}
       end
 

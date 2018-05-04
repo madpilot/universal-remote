@@ -1,6 +1,10 @@
 defmodule TestDevice do
   use Device
 
+  def meta_data do
+    %{name: "Test Device"}
+  end
+
   command :key_power_on do
     on_send_start do: {:ok, :send_start}
     on_send_stop do: {:ok, :send_stop}

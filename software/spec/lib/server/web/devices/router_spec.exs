@@ -30,8 +30,16 @@ defmodule Server.Web.Devices.RouterSpec do
           expect(response().status) |> to(eq 200)
         end
 
+        it "returns metadata" do
+          expect(response().resp_body |> Poison.decode! |> Access.get("meta_data")) |> to(eq(%{"name" => "Test Device"}))
+        end
+
         it "returns a list of commands" do
-          expect(response().resp_body |> Poison.decode! |> Enum.sort) |> to(eq(["key_power_on", "key_power_off", "key_standby", "key_volumedown", "key_volumeup"] |> Enum.sort))
+          expect(response().resp_body |> Poison.decode! |> Access.get("commands") |> Enum.sort) |> to(eq(["key_power_on", "key_power_off", "key_standby", "key_volumedown", "key_volumeup"] |> Enum.sort))
+        end
+
+        it "returns a list of statuses" do
+          expect(response().resp_body |> Poison.decode! |> Access.get("statuses") |> Enum.sort) |> to(eq(["volume", "mute"] |> Enum.sort))
         end
       end
 

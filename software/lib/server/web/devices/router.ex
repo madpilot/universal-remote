@@ -21,7 +21,7 @@ defmodule Server.Web.Devices.Router do
 
   get "/:device" do
     with {:ok, module} <- Devices.get(device |> String.to_atom),
-         list          <- module.commands()
+         list          <- %{commands: module.commands(), statuses: module.statuses, meta_data: module.meta_data}
     do
       send_json(conn, 200, list)
     else
