@@ -68,4 +68,16 @@ defmodule Server.Web.Devices.Router do
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
+
+  get "/:device/status/:status" do
+    with {:ok, status} <- Devices.get_status(device |> String.to_atom, status |> String.to_atom)
+    do
+      send_json(conn, 200, status)
+    else
+      {:timeout, message} -> send_json(conn, 408, %{error: message})
+      {:unknown_device} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_status} -> send_json(conn, 404, %{error: "Not Found"})
+      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
+    end
+  end
 end

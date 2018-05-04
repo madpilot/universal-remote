@@ -22,4 +22,12 @@ defmodule TestDevice do
   passthrough [
     :key_volumedown
   ], to: CEC.Remote, device: :audio_system
+
+  status :volume do
+    {:ok, %{volume: 50}}
+  end
+
+  status :mute do
+    {:timeout, "Status request timed out"}
+  end
 end

@@ -48,6 +48,10 @@
     GenServer.call(__MODULE__, {:send_stop, name, command})
   end
 
+  def get_status(name, status) do
+    GenServer.call(__MODULE__, {:get_status, name, status})
+  end
+
   def handle_call({:register, name, module}, _from, state) do
     Logger.info "Remotes - Registering #{inspect module} as #{name}"
     {:reply, {:ok}, state |> Map.merge(%{name => module})}
@@ -98,5 +102,17 @@
 
   def handle_call({:send_stop, name, command}, from, state) do
     handle_command({:send_stop, name, command}, from, state)
+  end
+
+  def handle_call({:get_status, name, status}, _from, state) do
+    case state do
+      %{^name => module} -> (
+        case module.statuses |> Enum.any?(fn(k) -> k == status end) do
+          true -> {:reply, apply(module, :get_status, [status]), state}
+          false -> {:reply, {:unknown_status}, state}
+        end
+      )
+      _ -> {:reply, {:unknown_device}, state}
+    end
   end
 end

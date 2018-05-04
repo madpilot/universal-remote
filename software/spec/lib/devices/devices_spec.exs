@@ -157,6 +157,27 @@ defmodule DevicesSpec do
         end
       end
     end
+
+    describe "get_status" do
+      subject do: GenServer.call(pid(), {:get_status, :test, :volume})
+
+      describe "module exists" do
+        let :initial, do: %{}
+        before do: GenServer.call(pid(), {:register, :test, TestDevice})
+
+        it "returns the status" do
+          expect(subject()) |> to(eq {:ok, %{volume: 50}})
+        end
+      end
+
+      describe "module does not exist" do
+        let :initial, do: %{}
+
+        it "returns unknown_device" do
+          expect(subject()) |> to(eq {:unknown_device})
+        end
+      end
+    end
   end
 
   describe "Proxy methods" do

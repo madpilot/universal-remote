@@ -182,5 +182,66 @@ defmodule Server.Web.Devices.RouterSpec do
         end
       end
     end
+
+    describe "/:device/status/:status" do
+      let :device, do: "test_device"
+      let :status, do: "volume"
+
+      let :response, do: conn(:get, "/#{device()}/status/#{status()}")
+        |> put_req_header("content-type", "application/json")
+        |> Router.call([])
+
+      describe "a device that is registered" do
+        let :device, do: "test_device"
+
+        describe "a status that exists" do
+          let :status, do: "volume"
+
+          it "returns a 200" do
+            expect(response().status) |> to(eq 200)
+          end
+
+          it "returns the status" do
+            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"volume" => 50}))
+          end
+        end
+
+        describe "a status that timed out" do
+          let :status, do: "mute"
+
+          it "returns a 408" do
+            expect(response().status) |> to(eq 408)
+          end
+
+          it "returns an error message" do
+            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Status request timed out"}))
+          end
+        end
+
+        describe "a status that doesn't exist" do
+          let :status, do: "not_exists"
+
+          it "returns a 404" do
+            expect(response().status) |> to(eq 404)
+          end
+
+          it "returns an error message" do
+            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+          end
+        end
+      end
+
+      describe "a device that doesn't exist" do
+        let :device, do: "not_exists"
+
+        it "returns a 404" do
+          expect(response().status) |> to(eq 404)
+        end
+
+        it "returns an error message" do
+          expect(response().resp_body |> Poison.decode!) |> to(eq(%{"error" => "Not Found"}))
+        end
+      end
+    end
   end
 end

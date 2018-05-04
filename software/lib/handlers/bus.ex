@@ -64,7 +64,7 @@ defmodule Bus do
 
   def result(pid) do
     case GenStage.call(pid, {:complete}) do
-      {:timeout} -> {:error, "Timeout"}
+      {:timeout} -> {:timeout, "Status request timed out"}
       {:complete, res} -> {:ok, res}
       _ -> result(pid)
     end

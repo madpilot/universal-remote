@@ -132,6 +132,10 @@ defmodule Device do
         :timer.sleep(microseconds)
       end
 
+      def wait_for(filter, do: block) do
+        Bus.wait_for(filter, block)
+      end
+
       def handle_event(_) do
         nil
       end
@@ -142,6 +146,10 @@ defmodule Device do
 
       def get_state(key) do
         Devices.State.get_state(__MODULE__, key)
+      end
+
+      def get_status(status) do
+        apply(__MODULE__, :"#{status}_status", [])
       end
     end
   end
