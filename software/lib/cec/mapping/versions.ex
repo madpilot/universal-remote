@@ -6,6 +6,7 @@ defmodule CEC.Mapping.Versions do
       "1.2a" -> 0x02
       "1.3" -> 0x03
       "1.3a" -> 0x04
+      "1.4" -> 0x05
     end
   end
 
@@ -16,6 +17,8 @@ defmodule CEC.Mapping.Versions do
       0x02 -> "1.2a"
       0x03 -> "1.3"
       0x04 -> "1.3a"
+      0x05 -> "1.4"
+      _    -> "unknown"
     end
   end
 end
