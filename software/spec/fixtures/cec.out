@@ -1,0 +1,18 @@
+log level set to 8
+No device type given. Using 'recording device'
+CEC Parser created - libCEC version 3.0.1
+no serial port given. trying autodetect:
+ path:     Raspberry Pi
+ com port: RPI
+
+opening a connection to the CEC adapter...
+TRAFFIC: [             111]  << e0
+TRAFFIC: [             172]  << e0:8c
+TRAFFIC: [             360]  >> 0f:87:00:00:f0
+TRAFFIC: [             365]  << 11
+TRAFFIC: [             639]  << 11
+TRAFFIC: [             913]  << 1f:84:34:00:01
+TRAFFIC: [            1068]  << 10:47:43:45:43:54:65:73:74:65:72
+TRAFFIC: [            1372]  << 10:8f
+TRAFFIC: [            1517]  >> 01:90:00
+waiting for input

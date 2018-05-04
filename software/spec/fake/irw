@@ -1,0 +1,27 @@
+#!/bin/bash
+set -eufo pipefail
+trap exit SIGPIPE
+
+echo "000000000000001a 00 KEY_SETUP foxtel"
+echo "000000000000001a 00 KEY_SETUP foxtel"
+echo "000000000000001c 00 KEY_DOWN foxtel"
+echo "000000000000001c 00 KEY_DOWN foxtel"
+echo "000000000000001c 00 KEY_DOWN foxtel"
+echo "000000000000001c 00 KEY_DOWN foxtel"
+echo "000000000000001c 01 KEY_DOWN foxtel"
+echo "000000000000001c 00 KEY_DOWN foxtel"
+echo "000000000000001c 01 KEY_DOWN foxtel"
+echo "0000000000000025 00 KEY_BACK foxtel"
+echo "0000000000000025 01 KEY_BACK foxtel"
+echo "0000000000000025 00 KEY_BACK foxtel"
+echo "000000000000001b 00 KEY_UP foxtel"
+echo "000000000000001b 00 KEY_UP foxtel"
+echo "000000000000001c 00 KEY_DOWN foxtel"
+echo "000000000000001b 00 KEY_UP foxtel"
+echo "000000000000001b 00 KEY_UP foxtel"
+echo "000000000000001b 00 KEY_UP foxtel"
+echo "000000000000001b 00 KEY_VOLUMEUP receiver"
+
+while [ 1 ]; do
+   read input
+done
