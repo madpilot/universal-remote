@@ -19,12 +19,10 @@ config :universal_remote,
   :servers,
     web: [
       enabled: true,
-      scheme: :https,
+      scheme: :http,
       options: [
         ip: {0, 0, 0, 0},
-        port: 4001,
-        keyfile: "priv/ssl/key.pem",
-        certfile: "priv/ssl/cert.pem"
+        port: 4001
       ]
     ]
 
