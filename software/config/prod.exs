@@ -17,3 +17,11 @@ config :universal_remote,
         port: 80,
       ]
     ]
+
+config :logger,
+  backends: [{LoggerFileBackend, :error_log}]
+
+# configuration for the {LoggerFileBackend, :error_log} backend
+config :logger, :error_log,
+  path: "/var/log/universal-remote/error.log",
+  level: :error

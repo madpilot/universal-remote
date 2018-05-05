@@ -35,6 +35,7 @@ defmodule UniversalRemote.Mixfile do
       {:cowboy, "~> 1.1.2"},
       {:apex, "~>1.2.0", only: [:dev,:test]},
       {:espec, "~> 1.5.1", only: :test},
+      {:logger_file_backend, "~> 0.0.10"},
       {:plug, "~> 1.5.0"},
       {:poison, "~> 3.1"}]
   end
