@@ -144,7 +144,10 @@ defmodule Device do
         receive do
           {:matched, event} -> {:ok, block}
         after
-          5_000 -> {:timeout, "Request timed out"}
+          5_000 -> (
+            Process.exit(pid, :normal)
+            {:timeout, "Request timed out"}
+          )
         end
       end
 
