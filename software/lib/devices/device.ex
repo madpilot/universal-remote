@@ -119,7 +119,9 @@ defmodule Device do
 
       def handle_events(events, _from, state) do
         events
-        |> Enum.each(fn(event) -> handle_event(event) end)
+          |> Enum.each(fn(event) ->
+            handle_event(event)
+          end)
 
         {:noreply, [], state}
       end
@@ -137,7 +139,17 @@ defmodule Device do
       end
 
       def wait_for(filter, do: block) do
-        Listener.wait_for(filter, block)
+        {:ok, pid} = Devices.OneShotListener.wait_for(filter, self())
+
+        receive do
+          {:matched, event} -> {:ok, block}
+        after
+          5_000 -> {:timeout, "Request timed out"}
+        end
+      end
+
+      def handle_cast({:add_filter, filter}, state) do
+        {:noreply, [], [filter | state[:filters]]}
       end
 
       def handle_event(_) do
