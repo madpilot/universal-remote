@@ -114,7 +114,7 @@ defmodule Device do
           false -> nil
           true -> apply(__MODULE__, :setup, [])
         end
-        {:consumer, %{}, subscribe_to: [CEC.Producer, LIRC.Producer]}
+        {:consumer, %{}, subscribe_to: [Bus]}
       end
 
       def handle_events(events, _from, state) do
@@ -137,7 +137,7 @@ defmodule Device do
       end
 
       def wait_for(filter, do: block) do
-        Bus.wait_for(filter, block)
+        Listener.wait_for(filter, block)
       end
 
       def handle_event(_) do

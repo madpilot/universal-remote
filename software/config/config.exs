@@ -30,7 +30,8 @@ config :universal_remote,
   :buses,
     modules: [
       CEC.Supervisor,
-      LIRC.Supervisor
+      LIRC.Supervisor,
+      Bus
     ]
 
 config :universal_remote,
