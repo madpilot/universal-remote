@@ -140,9 +140,11 @@ defmodule Device do
 
       def wait_for(filter, do: block) do
         {:ok, pid} = Devices.OneShotListener.wait_for(filter, self())
+        
+        _ = block
 
         receive do
-          {:matched, event} -> {:ok, block}
+          {:matched, event} -> event
         after
           5_000 -> (
             Process.exit(pid, :normal)

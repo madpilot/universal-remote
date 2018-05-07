@@ -7,7 +7,7 @@ defmodule Devices.Listener do
   end
 
   def init(state) do
-    {:consumer, state, subscribe_to: [Bus]}
+    {:consumer, state, subscribe_to: [CEC.Producer, LIRC.Producer]}
   end
 
   def completed(events, filter) do
