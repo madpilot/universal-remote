@@ -144,7 +144,7 @@ defmodule Device do
         _ = block
 
         receive do
-          {:matched, event} -> event
+          {:matched, event} -> {:ok, event}
         after
           5_000 -> (
             Process.exit(pid, :normal)
