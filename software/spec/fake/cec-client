@@ -20,11 +20,6 @@ defmodule FakeCEC do
     traffic_out("1f:84:34:00:01")
     traffic_out("10:47:43:45:43:54:65:73:74:65:72")
     traffic_out("10:8f")
-
-    case state[:tv][:power_on] do
-      true -> traffic_in("01:90:00")
-      false -> traffic_out("01:90:01")
-    end
   end
 
   def traffic_out(code) do
@@ -37,6 +32,16 @@ defmodule FakeCEC do
 
   def process_code(code) do
     traffic_out(code)
+    respond(code)
+  end
+
+  def respond(code) when code == "15:71" do
+    :timer.sleep(10)
+    traffic_out("51:7A:32")
+  end
+
+  def respond(_code) do
+    nil
   end
 
   def process(state, input) do
