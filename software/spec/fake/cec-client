@@ -1,7 +1,7 @@
 #!/usr/bin/env elixir
 
 defmodule FakeCEC do
-  def start(state) do
+  def start(_) do
     IO.puts "log level set to 8"
     IO.puts "log level set to 8"
     IO.puts "No device type given. Using 'recording device'"
