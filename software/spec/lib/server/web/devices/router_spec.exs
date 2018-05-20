@@ -13,10 +13,9 @@ defmodule Server.Web.Devices.RouterSpec do
       end
 
       it "returns a list of all the remotes registered" do
-        expect(response().resp_body |> Poison.decode!) |> to(eq(%{"devices": ["test_device", "test_device_2"]}))
+        expect(response().resp_body |> Poison.decode! |> Access.get("devices")) |> to(eq(["test", "test_device", "test_device_2"]))
       end
     end
-
 
     describe "/:device" do
       let :device, do: "test_device"
@@ -28,6 +27,10 @@ defmodule Server.Web.Devices.RouterSpec do
 
         it "returns a 200" do
           expect(response().status) |> to(eq 200)
+        end
+
+        it "returns the device name" do
+          expect(response().resp_body |> Poison.decode! |> Access.get("device")) |> to(eq(device()))
         end
 
         it "returns metadata" do
