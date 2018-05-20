@@ -13,6 +13,7 @@ defmodule Supervisors.Servers do
 
         options = config[:options]
                   |> List.insert_at(0, {:otp_app, :universal_remote})
+                  |> List.insert_at(0, {:dispatch, dispatch})
 
         Logger.info "Servers - Initializing web server #{scheme}://#{ip}:#{port}/"
         [Plug.Adapters.Cowboy.child_spec(scheme, Server.Web.Router, [], options) | children ]
@@ -31,5 +32,14 @@ defmodule Supervisors.Servers do
     |> web(config[:web])
 
     supervise(children, strategy: :one_for_one)
+  end
+
+  defp dispatch do
+    [
+      {:_, [
+        {"/ws", Server.Websocket.Handler, []},
+        {:_, Plug.Adapters.Cowboy.Handler, {Server.Web.Router, []}}
+      ]}
+    ]
   end
 end
