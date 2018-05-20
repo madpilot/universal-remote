@@ -1,13 +1,13 @@
 defmodule API.Devices do
   def serve(%{action: :get_devices}) do
-    {:reply, Devices.list |> Map.keys}
+    {:reply, %{devices: Devices.list |> Map.keys}}
   end
 
   def serve(%{action: :get_actions, device: device}) do
     with {:ok, module} <- Devices.get(device |> String.to_atom),
          list          <- %{commands: module.commands(), statuses: module.statuses, meta_data: module.meta_data}
     do
-      {:reply, list}
+      {:reply, %{device: device, actions: list}}
     else
       message -> message
     end
@@ -44,7 +44,7 @@ defmodule API.Devices do
     with {:ok, module} <- Devices.get(device |> String.to_atom),
          list          <- module.statuses()
     do
-      {:reply, list}
+      {:reply, %{statuses: list}}
     else
       message -> message
     end
@@ -53,14 +53,13 @@ defmodule API.Devices do
   def serve(%{action: :get_status, device: device, status: status}) do
     with {:ok, status} <- Devices.get_status(device |> String.to_atom, status |> String.to_atom)
     do
-      {:reply, status}
+      {:reply, %{status: status |> Map.merge(%{device: device})}}
     else
       message -> message
     end
   end
 
   def serve(payload) do
-    Apex.ap payload
     {:reply, %{error: "Unknown action: #{payload[:action]}"}}
   end
 end
