@@ -29,6 +29,7 @@ config :universal_remote,
 config :universal_remote,
   :buses,
     modules: [
+      Event.Supervisor,
       CEC.Supervisor,
       LIRC.Supervisor,
       Bus
