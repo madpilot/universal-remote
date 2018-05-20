@@ -14,38 +14,38 @@ defmodule Server.Web.Devices.Router do
   end
 
   get "/:device" do
-    API.Devices.serve(%{action: :get_metadata, device: device})
+    API.Devices.serve(%{action: :get_metadata, device: device |> String.to_existing_atom})
     |> send_reply(conn)
   end
 
   put "/:device/send" do
     %{"command" => command} = conn.body_params
 
-    API.Devices.serve(%{action: :send_command, device: device, command: command})
+    API.Devices.serve(%{action: :send_command, device: device |> String.to_existing_atom, command: command |> String.to_existing_atom})
     |> send_reply(conn)
   end
 
   put "/:device/start" do
     %{"command" => command} = conn.body_params
 
-    API.Devices.serve(%{action: :start_command, device: device, command: command})
+    API.Devices.serve(%{action: :start_command, device: device |> String.to_existing_atom, command: command |> String.to_existing_atom})
     |> send_reply(conn)
   end
 
   put "/:device/stop" do
     %{"command" => command} = conn.body_params
 
-    API.Devices.serve(%{action: :stop_command, device: device, command: command})
+    API.Devices.serve(%{action: :stop_command, device: device |> String.to_existing_atom, command: command |> String.to_existing_atom})
     |> send_reply(conn)
   end
 
   get "/:device/status" do
-    API.Devices.serve(%{action: :list_statuses, device: device})
+    API.Devices.serve(%{action: :list_statuses, device: device |> String.to_existing_atom})
     |> send_reply(conn)
   end
 
   get "/:device/status/:status" do
-    API.Devices.serve(%{action: :get_status, device: device, status: status})
+    API.Devices.serve(%{action: :get_status, device: device |> String.to_existing_atom, status: status |> String.to_existing_atom})
     |> send_reply(conn)
   end
 

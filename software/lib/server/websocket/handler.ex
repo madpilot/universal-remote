@@ -29,7 +29,7 @@ defmodule Server.Websocket.Handler do
                       {String.to_existing_atom(k), String.to_existing_atom(v)}
                     end),
          bus <- payload[:bus],
-         payload <- payload |> Map.delete("bus")
+         payload <- payload |> Map.delete(:bus)
     do
       dispatch(bus, payload, req, state)
     else
