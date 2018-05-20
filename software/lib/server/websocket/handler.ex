@@ -24,7 +24,10 @@ defmodule Server.Websocket.Handler do
 
   def websocket_handle({:text, message}, req, state) do
     with {:ok, payload} <- message |> Poison.decode,
-         payload <- payload |> Map.new(fn {k, v} -> {String.to_existing_atom(k), String.to_existing_atom(v)} end),
+         payload <- payload
+                    |> Map.new(fn {k, v} ->
+                      {String.to_existing_atom(k), String.to_existing_atom(v)}
+                    end),
          bus <- payload[:bus],
          payload <- payload |> Map.delete("bus")
     do
