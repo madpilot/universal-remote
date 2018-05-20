@@ -8,86 +8,62 @@ defmodule Server.Web.Devices.Router do
                      json_decoder: Poison
   plug :dispatch
 
-  def send_json(conn, status, obj) do
-    conn
-    |> put_resp_content_type("application/json")
-    |> send_resp(status, obj |> Poison.encode!)
-  end
-
   get "/" do
-    conn
-    |> send_json(200, Devices.list |> Map.keys)
+    API.Devices.serve(%{action: :get_devices})
+    |> send_reply(conn)
   end
 
   get "/:device" do
-    with {:ok, module} <- Devices.get(device |> String.to_atom),
-         list          <- %{commands: module.commands(), statuses: module.statuses, meta_data: module.meta_data}
-    do
-      send_json(conn, 200, list)
-    else
-      {:unknown_device} -> send_json(conn, 404, %{error: "Not Found"})
-      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
-    end
+    API.Devices.serve(%{action: :get_actions, device: device})
+    |> send_reply(conn)
   end
 
   put "/:device/send" do
     %{"command" => command} = conn.body_params
 
-    with :ok <- Devices.send_once(device |> String.to_atom, command |> String.to_atom) |> elem(0)
-    do
-      send_json(conn, 200, %{ok: "ok"})
-    else
-      :unknown_device -> send_json(conn, 404, %{error: "Not Found"})
-      :unknown_command -> send_json(conn, 404, %{error: "Not Found"})
-      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
-    end
+    API.Devices.serve(%{action: :send_command, device: device, command: command})
+    |> send_reply(conn)
   end
 
   put "/:device/start" do
     %{"command" => command} = conn.body_params
 
-    with :ok <- Devices.send_start(device |> String.to_atom, command |> String.to_atom) |> elem(0)
-    do
-      send_json(conn, 200, %{ok: "ok"})
-    else
-      :unknown_device -> send_json(conn, 404, %{error: "Not Found"})
-      :unknown_command -> send_json(conn, 404, %{error: "Not Found"})
-      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
-    end
+    API.Devices.serve(%{action: :start_command, device: device, command: command})
+    |> send_reply(conn)
   end
 
   put "/:device/stop" do
     %{"command" => command} = conn.body_params
 
-    with :ok <- Devices.send_stop(device |> String.to_atom, command |> String.to_atom) |> elem(0)
-    do
-      send_json(conn, 200, %{ok: "ok"})
-    else
-      :unknown_device -> send_json(conn, 404, %{error: "Not Found"})
-      :unknown_command -> send_json(conn, 404, %{error: "Not Found"})
-      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
-    end
+    API.Devices.serve(%{action: :stop_command, device: device, command: command})
+    |> send_reply(conn)
   end
 
   get "/:device/status" do
-    with {:ok, module} <- Devices.get(device |> String.to_atom),
-         list          <- module.statuses()
-    do
-      send_json(conn, 200, list)
-    else
-      {:unknown_device} -> send_json(conn, 404, %{error: "Not Found"})
-      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
-    end
+    API.Devices.serve(%{action: :list_statuses, device: device})
+    |> send_reply(conn)
   end
 
   get "/:device/status/:status" do
-    with {:ok, status} <- Devices.get_status(device |> String.to_atom, status |> String.to_atom)
-    do
-      send_json(conn, 200, status)
-    else
-      {:timeout, message} -> send_json(conn, 408, %{error: message})
+    API.Devices.serve(%{action: :get_status, device: device, status: status})
+    |> send_reply(conn)
+  end
+
+  defp send_json(conn, status, obj) do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(status, obj |> Poison.encode!)
+  end
+
+  defp send_reply(reply, conn) do
+    case reply do
+      {:reply, payload} -> send_json(conn, 200, payload)
+      :unknown_device -> send_json(conn, 404, %{error: "Not Found"})
+      :unknown_command -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_device} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_command} -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_status} -> send_json(conn, 404, %{error: "Not Found"})
+      {:timeout, message} -> send_json(conn, 408, %{error: message})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end

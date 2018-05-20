@@ -10,7 +10,7 @@ defmodule Server.Web.Router do
   plug :dispatch
 
   get "/" do
-    send_resp(conn, 200, "index")
+    send_resp(conn, 200, "<html><head><script>var socket=new WebSocket('ws://localhost:4001/ws');socket.addEventListener('open', function (event) {socket.send(JSON.stringify({bus:'devices',command:'list'}));});socket.addEventListener('message', function (event) {console.log('Message from server ', event.data);});</script></head><body></body></html>")
   end
 
   forward "/remotes", to: Server.Web.Remotes.Router
