@@ -53,7 +53,7 @@ defmodule API.Devices do
   def serve(%{action: :get_status, device: device, status: status}) do
     with {:ok, status} <- Devices.get_status(device |> String.to_atom, status |> String.to_atom)
     do
-      {:reply, %{status: status |> Map.merge(%{device: device})}}
+      {:reply, %{status: status, device: device}}
     else
       message -> message
     end
