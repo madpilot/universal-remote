@@ -13,7 +13,7 @@ defmodule Server.Web.Devices.RouterSpec do
       end
 
       it "returns a list of all the remotes registered" do
-        expect(response().resp_body |> Poison.decode!) |> to(eq(["test_device", "test_device_2"]))
+        expect(response().resp_body |> Poison.decode!) |> to(eq(%{"devices": ["test_device", "test_device_2"]}))
       end
     end
 
@@ -204,7 +204,7 @@ defmodule Server.Web.Devices.RouterSpec do
         end
 
         it "returns a list of statuses" do
-          expect(response().resp_body |> Poison.decode! |> Enum.sort) |> to(eq(["volume", "mute"] |> Enum.sort))
+          expect(response().resp_body |> Poison.decode! |> Map.get("statuses") |> Enum.sort) |> to(eq(["volume", "mute"] |> Enum.sort))
         end
       end
 
@@ -240,7 +240,7 @@ defmodule Server.Web.Devices.RouterSpec do
           end
 
           it "returns the status" do
-            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"volume" => 50}))
+            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"device" => device(), "status" => %{"volume" => 50}}))
           end
         end
 

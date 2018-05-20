@@ -3,11 +3,11 @@ defmodule API.Devices do
     {:reply, %{devices: Devices.list |> Map.keys}}
   end
 
-  def serve(%{action: :get_actions, device: device}) do
+  def serve(%{action: :get_metadata, device: device}) do
     with {:ok, module} <- Devices.get(device |> String.to_atom),
          list          <- %{commands: module.commands(), statuses: module.statuses, meta_data: module.meta_data}
     do
-      {:reply, %{device: device, actions: list}}
+      {:reply, %{device: device} |> Map.merge(list)}
     else
       message -> message
     end
@@ -16,7 +16,7 @@ defmodule API.Devices do
   def serve(%{action: :send_command, device: device, command: command}) do
     with :ok <- Devices.send_once(device |> String.to_atom, command |> String.to_atom) |> elem(0)
     do
-      {:reply, %{ok: "ok"}}
+      {:ok}
     else
       message -> message
     end
@@ -25,7 +25,7 @@ defmodule API.Devices do
   def serve(%{action: :start_command, device: device, command: command}) do
     with :ok <- Devices.send_start(device |> String.to_atom, command |> String.to_atom) |> elem(0)
     do
-      {:reply, %{ok: "ok"}}
+      {:ok}
     else
       message -> message
     end
@@ -34,7 +34,7 @@ defmodule API.Devices do
   def serve(%{action: :stop_command, device: device, command: command}) do
     with :ok <- Devices.send_stop(device |> String.to_atom, command |> String.to_atom) |> elem(0)
     do
-      {:reply, %{ok: "ok"}}
+      {:ok}
     else
       message -> message
     end

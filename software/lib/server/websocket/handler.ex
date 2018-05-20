@@ -52,6 +52,7 @@ defmodule Server.Websocket.Handler do
 
   defp dispatch(bus, payload, req, state) when bus == :devices do
     case API.Devices.serve(payload) do
+      {:ok} -> {:ok, req, state}
       {:reply, payload} -> encode_payload(:reply, payload, req, state)
       :unknown_device -> encode_payload(:reply, %{error: "Not Found"}, req, state)
       :unknown_command -> encode_payload(:reply, %{error: "Not Found"}, req, state)

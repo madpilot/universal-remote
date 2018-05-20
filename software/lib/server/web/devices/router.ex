@@ -14,7 +14,7 @@ defmodule Server.Web.Devices.Router do
   end
 
   get "/:device" do
-    API.Devices.serve(%{action: :get_actions, device: device})
+    API.Devices.serve(%{action: :get_metadata, device: device})
     |> send_reply(conn)
   end
 
@@ -57,6 +57,7 @@ defmodule Server.Web.Devices.Router do
 
   defp send_reply(reply, conn) do
     case reply do
+      {:ok} -> conn |> send_resp(:ok, "")
       {:reply, payload} -> send_json(conn, 200, payload)
       :unknown_device -> send_json(conn, 404, %{error: "Not Found"})
       :unknown_command -> send_json(conn, 404, %{error: "Not Found"})
