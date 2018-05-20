@@ -16,6 +16,9 @@ defmodule Devices.State do
     end
 
     new_device_state = device_state |> Map.put(key, value)
+    
+    Event.Producer.broadcast(%{bus: :event, command: :state_change, device: module |> Macro.underscore |> String.to_atom, key: key, value: value})
+    
     {:noreply, state |> Map.put(module, new_device_state)}
   end
 
