@@ -12,6 +12,7 @@ defmodule Bus do
 
   def handle_events(events, _from, state) do
     # Just pass the events straight through, so we have a unified bus
+    events |> Enum.each(fn(event) -> Logger.debug("Bus - #{inspect event}") end)
     {:noreply, events, state}
   end
 end
