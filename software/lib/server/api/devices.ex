@@ -60,6 +60,7 @@ defmodule API.Devices do
   end
 
   def serve(payload) do
+    Apex.ap payload
     {:reply, %{error: "Unknown action: #{payload[:action]}"}}
   end
 end
