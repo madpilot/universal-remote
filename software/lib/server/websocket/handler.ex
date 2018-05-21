@@ -23,17 +23,21 @@ defmodule Server.Websocket.Handler do
   end
 
   def websocket_handle({:text, message}, req, state) do
-    with {:ok, payload} <- message |> Poison.decode,
-         payload <- payload
-                    |> Map.new(fn {k, v} ->
-                      {String.to_existing_atom(k), String.to_existing_atom(v)}
-                    end),
-         channel <- payload[:channel],
-         payload <- payload |> Map.delete(:channel)
-    do
-      dispatch(channel, payload, req, state)
-    else
-      _ -> encode_payload(:reply, %{error: "Message must be JSON"}, req, state)
+    try do
+      with {:ok, payload} <- message |> Poison.decode,
+           payload <- payload
+                      |> Map.new(fn {k, v} ->
+                        {String.to_existing_atom(k), String.to_existing_atom(v)}
+                      end),
+           channel <- payload[:channel],
+           payload <- payload |> Map.delete(:channel)
+      do
+        dispatch(channel, payload, req, state)
+      else
+        _ -> encode_payload(:reply, %{error: "Message must be JSON"}, req, state)
+      end
+    rescue
+      _ in ArgumentError -> encode_payload(:reply, %{error: "Invalid input"}, req, state)
     end
   end
 

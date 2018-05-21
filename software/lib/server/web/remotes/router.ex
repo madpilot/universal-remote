@@ -9,39 +9,47 @@ defmodule Server.Web.Remotes.Router do
   plug :dispatch
 
   get "/" do
-    API.Remotes.serve(%{action: :get_buses})
+    serve(%{action: :get_buses})
     |> send_reply(conn)
   end
 
   get "/:bus" do
-    API.Remotes.serve(%{action: :get_remotes, bus: bus |> String.to_existing_atom})
+    serve(%{action: :get_remotes, bus: bus})
     |> send_reply(conn)
   end
 
   get "/:bus/:remote" do
-    API.Remotes.serve(%{action: :get_keys, bus: bus |> String.to_existing_atom, remote: remote |> String.to_existing_atom})
+    serve(%{action: :get_keys, bus: bus, remote: remote})
     |> send_reply(conn)
   end
 
   put "/:bus/:remote/send" do
     %{"key" => key} = conn.body_params
 
-    API.Remotes.serve(%{action: :send_key, bus: bus |> String.to_existing_atom, remote: remote |> String.to_existing_atom, key: key |> String.to_existing_atom})
+    serve(%{action: :send_key, bus: bus, remote: remote, key: key})
     |> send_reply(conn)
   end
 
   put "/:bus/:remote/start" do
     %{"key" => key} = conn.body_params
 
-    API.Remotes.serve(%{action: :start_key, bus: bus |> String.to_existing_atom, remote: remote |> String.to_existing_atom, key: key |> String.to_existing_atom})
+    serve(%{action: :start_key, bus: bus, remote: remote, key: key})
     |> send_reply(conn)
   end
 
   put "/:bus/:remote/stop" do
     %{"key" => key} = conn.body_params
 
-    API.Remotes.serve(%{action: :stop_key, bus: bus |> String.to_existing_atom, remote: remote |> String.to_existing_atom, key: key |> String.to_existing_atom})
+    serve(%{action: :stop_key, bus: bus, remote: remote, key: key})
     |> send_reply(conn)
+  end
+
+  defp serve(payload) do
+    try do
+      API.Remotes.serve(payload |> Map.new(fn {k, v} -> {String.to_existing_atom(k), String.to_existing_atom(v)} end))
+    rescue
+      _ in ArgumentError -> {:error, "Invalid input"}
+    end
   end
 
   defp send_json(conn, status, obj) do
@@ -62,6 +70,7 @@ defmodule Server.Web.Remotes.Router do
       {:unknown_command} -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_status} -> send_json(conn, 404, %{error: "Not Found"})
       {:timeout, message} -> send_json(conn, 408, %{error: message})
+      {:error, message} -> send_json(conn, 500, %{error: message})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end
