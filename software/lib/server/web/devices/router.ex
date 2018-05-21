@@ -9,43 +9,43 @@ defmodule Server.Web.Devices.Router do
   plug :dispatch
 
   get "/" do
-    API.Devices.serve(%{action: :get_devices})
+    serve(%{action: :get_devices})
     |> send_reply(conn)
   end
 
   get "/:device" do
-    API.Devices.serve(%{action: :get_metadata, device: device |> String.to_existing_atom})
+    serve(%{action: :get_metadata, device: device})
     |> send_reply(conn)
   end
 
   put "/:device/send" do
     %{"command" => command} = conn.body_params
 
-    API.Devices.serve(%{action: :send_command, device: device |> String.to_existing_atom, command: command |> String.to_existing_atom})
+    serve(%{action: :send_command, device: device, command: command})
     |> send_reply(conn)
   end
 
   put "/:device/start" do
     %{"command" => command} = conn.body_params
 
-    API.Devices.serve(%{action: :start_command, device: device |> String.to_existing_atom, command: command |> String.to_existing_atom})
+    serve(%{action: :start_command, device: device, command: command})
     |> send_reply(conn)
   end
 
   put "/:device/stop" do
     %{"command" => command} = conn.body_params
 
-    API.Devices.serve(%{action: :stop_command, device: device |> String.to_existing_atom, command: command |> String.to_existing_atom})
+    serve(%{action: :stop_command, device: device, command: command})
     |> send_reply(conn)
   end
 
   get "/:device/status" do
-    API.Devices.serve(%{action: :list_statuses, device: device |> String.to_existing_atom})
+    serve(%{action: :list_statuses, device: device})
     |> send_reply(conn)
   end
 
   get "/:device/status/:status" do
-    API.Devices.serve(%{action: :get_status, device: device |> String.to_existing_atom, status: status |> String.to_existing_atom})
+    serve(%{action: :get_status, device: device, status: status})
     |> send_reply(conn)
   end
 
@@ -53,6 +53,22 @@ defmodule Server.Web.Devices.Router do
     conn
     |> put_resp_content_type("application/json")
     |> send_resp(status, obj |> Poison.encode!)
+  end
+
+  defp serve(payload) do
+    try do
+      API.Devices.serve(payload |> Map.new(fn {k, v} -> {atomize(k), atomize(v)} end))
+    rescue
+      _ in ArgumentError -> {:error, "Invalid input"}
+    end
+  end
+
+  defp atomize(obj) when is_atom(obj) do
+    obj
+  end
+
+  defp atomize(obj) when is_binary(obj) do
+    String.to_existing_atom(obj)
   end
 
   defp send_reply(reply, conn) do

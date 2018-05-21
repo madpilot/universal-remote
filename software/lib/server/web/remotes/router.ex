@@ -9,6 +9,7 @@ defmodule Server.Web.Remotes.Router do
   plug :dispatch
 
   get "/" do
+    _ = :action
     serve(%{action: :get_buses})
     |> send_reply(conn)
   end
@@ -46,10 +47,18 @@ defmodule Server.Web.Remotes.Router do
 
   defp serve(payload) do
     try do
-      API.Remotes.serve(payload |> Map.new(fn {k, v} -> {String.to_existing_atom(k), String.to_existing_atom(v)} end))
+      API.Remotes.serve(payload |> Map.new(fn {k, v} -> {atomize(k), atomize(v)} end))
     rescue
       _ in ArgumentError -> {:error, "Invalid input"}
     end
+  end
+
+  defp atomize(obj) when is_atom(obj) do
+    obj
+  end
+
+  defp atomize(obj) when is_binary(obj) do
+    String.to_existing_atom(obj)
   end
 
   defp send_json(conn, status, obj) do
