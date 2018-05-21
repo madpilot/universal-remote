@@ -9,7 +9,6 @@ defmodule Server.Web.Remotes.Router do
   plug :dispatch
 
   get "/" do
-    _ = :action
     serve(%{action: :get_buses})
     |> send_reply(conn)
   end
