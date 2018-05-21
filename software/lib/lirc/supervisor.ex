@@ -8,7 +8,8 @@ defmodule LIRC.Supervisor do
   def init(_) do
     children = [
       worker(LIRC.Producer, []),
-      worker(LIRC.Process, [])
+      worker(LIRC.Process, []),
+      worker(LIRC.AtomTableLoader, [], restart: :temporary)
     ]
     supervise(children, strategy: :one_for_one)
   end
