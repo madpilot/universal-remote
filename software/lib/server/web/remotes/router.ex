@@ -44,6 +44,20 @@ defmodule Server.Web.Remotes.Router do
     |> send_reply(conn)
   end
 
+  post _ do
+    send_reply({:not_acceptable, "Use the PUT verb"}, conn)
+  end
+
+  delete _ do
+    send_reply({:not_acceptable, "DELETE is not supported"}, conn)
+  end
+
+  match _ do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(404, %{error: "Not Found"} |> Poison.encode!)
+  end
+
   defp serve(payload) do
     try do
       API.Remotes.serve(payload |> Map.new(fn {k, v} -> {atomize(k), atomize(v)} end))
@@ -77,6 +91,7 @@ defmodule Server.Web.Remotes.Router do
       {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_command} -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_status} -> send_json(conn, 404, %{error: "Not Found"})
+      {:not_acceptable, message} -> send_json(conn, 406, %{error: message})
       {:timeout, message} -> send_json(conn, 408, %{error: message})
       {:error, message} -> send_json(conn, 500, %{error: message})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})

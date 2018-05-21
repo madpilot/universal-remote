@@ -2,6 +2,7 @@ defmodule Server.Web.Devices.Router do
   use Plug.Router
 
   plug Plug.Logger, log: :info
+
   plug :match
   plug Plug.Parsers, parsers: [:json],
                      pass:  ["application/json"],
@@ -49,10 +50,18 @@ defmodule Server.Web.Devices.Router do
     |> send_reply(conn)
   end
 
-  defp send_json(conn, status, obj) do
+  post _ do
+    send_reply({:not_acceptable, "POST not supported. Use the PUT verb"}, conn)
+  end
+
+  delete _ do
+    send_reply({:not_acceptable, "DELETE is not supported"}, conn)
+  end
+
+  match _ do
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(status, obj |> Poison.encode!)
+    |> send_resp(404, %{error: "Not Found"} |> Poison.encode!)
   end
 
   defp serve(payload) do
@@ -80,8 +89,15 @@ defmodule Server.Web.Devices.Router do
       {:unknown_device} -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_command} -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_status} -> send_json(conn, 404, %{error: "Not Found"})
+      {:not_acceptable, message} -> send_json(conn, 406, %{error: message})
       {:timeout, message} -> send_json(conn, 408, %{error: message})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
+  end
+
+    defp send_json(conn, status, obj) do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(status, obj |> Poison.encode!)
   end
 end

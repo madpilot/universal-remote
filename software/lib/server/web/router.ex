@@ -5,6 +5,7 @@
 
 defmodule Server.Web.Router do
   use Plug.Router
+  use Plug.ErrorHandler
 
   plug :match
   plug :dispatch
@@ -17,6 +18,14 @@ defmodule Server.Web.Router do
   forward "/devices", to: Server.Web.Devices.Router
 
   match _ do
-    send_resp(conn, 404, "Not Found")
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(404, %{error: "Not Found"} |> Poison.encode!)
+  end
+
+  def handle_errors(conn, %{kind: _kind, reason: _reason, stack: _stack}) do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(conn.status, %{error: "Something went wrong"} |> Poison.encode!)
   end
 end
