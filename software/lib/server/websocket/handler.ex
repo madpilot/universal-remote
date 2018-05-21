@@ -28,10 +28,10 @@ defmodule Server.Websocket.Handler do
                     |> Map.new(fn {k, v} ->
                       {String.to_existing_atom(k), String.to_existing_atom(v)}
                     end),
-         bus <- payload[:bus],
-         payload <- payload |> Map.delete(:bus)
+         channel <- payload[:channel],
+         payload <- payload |> Map.delete(:channel)
     do
-      dispatch(bus, payload, req, state)
+      dispatch(channel, payload, req, state)
     else
       _ -> encode_payload(:reply, %{error: "Message must be JSON"}, req, state)
     end
@@ -50,8 +50,8 @@ defmodule Server.Websocket.Handler do
     Supervisor.start_link([child], strategy: :one_for_one)
   end
 
-  defp dispatch(bus, payload, req, state) when bus == :devices do
-    case API.Devices.serve(payload) do
+  defp dispatch(channel, payload, req, state) when channel == :remotes do
+    case API.Remotes.serve(payload) do
       {:ok} -> {:ok, req, state}
       {:reply, payload} -> encode_payload(:reply, payload, req, state)
       :unknown_device -> encode_payload(:reply, %{error: "Not Found"}, req, state)
@@ -63,8 +63,23 @@ defmodule Server.Websocket.Handler do
     end
   end
 
-  defp dispatch(bus, _, req, state) do
-    encode_payload(:reply, %{error: "Unknown bus: #{bus}"}, req, state)
+  defp dispatch(channel, payload, req, state) when channel == :devices do
+    case API.Devices.serve(payload) do
+      {:ok} -> {:ok, req, state}
+      {:reply, payload} -> encode_payload(:reply, payload, req, state)
+      :unknown_bus -> encode_payload(:reply, %{error: "Not Found"}, req, state)
+      :unknown_remote -> encode_payload(:reply, %{error: "Not Found"}, req, state)
+      :unknown_command -> encode_payload(:reply, %{error: "Not Found"}, req, state)
+      {:unknown_bus} -> encode_payload(:reply, %{error: "Not Found"}, req, state)
+      {:unknown_remote} -> encode_payload(:reply, %{error: "Not Found"}, req, state)
+      {:unknown_command} -> encode_payload(:reply, %{error: "Not Found"}, req, state)
+      {:unknown_status} -> encode_payload(:reply, %{error: "Not Found"}, req, state)
+      message -> encode_payload(:reply, message, req, state)
+    end
+  end
+
+  defp dispatch(channel, _, req, state) do
+    encode_payload(:reply, %{error: "Unknown channel: #{channel}"}, req, state)
   end
 
   defp encode_payload(status, payload, req, state) do
