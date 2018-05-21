@@ -13,7 +13,7 @@ defmodule Supervisors.Servers do
 
         options = config[:options]
                   |> List.insert_at(0, {:otp_app, :universal_remote})
-                  |> List.insert_at(0, {:dispatch, dispatch})
+                  |> List.insert_at(0, {:dispatch, dispatch()})
 
         Logger.info "Servers - Initializing web server #{scheme}://#{ip}:#{port}/"
         [Plug.Adapters.Cowboy.child_spec(scheme, Server.Web.Router, [], options) | children ]
