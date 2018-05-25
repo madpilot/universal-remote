@@ -5,7 +5,7 @@ defmodule API.Devices do
 
   def serve(%{action: :get_metadata, device: device}) do
     with {:ok, module} <- Devices.get(device),
-         list          <- %{commands: module.commands(), statuses: module.statuses, meta_data: module.meta_data}
+         list          <- %{commands: module.commands(), statuses: module.statuses, metadata: module.metadata}
     do
       {:reply, %{device: device} |> Map.merge(list)}
     else
