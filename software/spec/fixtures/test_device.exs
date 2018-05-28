@@ -1,7 +1,7 @@
 defmodule TestDevice do
   use Device
 
-  def meta_data do
+  def metadata do
     %{name: "Test Device"}
   end
 

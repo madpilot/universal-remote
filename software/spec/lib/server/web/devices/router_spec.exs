@@ -34,7 +34,7 @@ defmodule Server.Web.Devices.RouterSpec do
         end
 
         it "returns metadata" do
-          expect(response().resp_body |> Poison.decode! |> Access.get("meta_data")) |> to(eq(%{"name" => "Test Device"}))
+          expect(response().resp_body |> Poison.decode! |> Access.get("metadata")) |> to(eq(%{"name" => "Test Device"}))
         end
 
         it "returns a list of commands" do
