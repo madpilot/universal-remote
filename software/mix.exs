@@ -9,7 +9,8 @@ defmodule UniversalRemote.Mixfile do
      compilers: Mix.compilers,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     preferred_cli_env: [espec: :test],
+     preferred_cli_env: [espec: :test, "coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test],
+     test_coverage: [tool: ExCoveralls, test_task: "espec"],
      deps: deps()]
   end
 
@@ -35,6 +36,7 @@ defmodule UniversalRemote.Mixfile do
       {:cowboy, "~> 1.1.2"},
       {:apex, "~>1.2.0", only: [:dev,:test]},
       {:espec, "~> 1.5.1", only: :test},
+      {:excoveralls, "~> 0.8", only: :test},
       {:logger_file_backend, "~> 0.0.10"},
       {:plug, "~> 1.5.0"},
       {:poison, "~> 3.1"}]
