@@ -47,4 +47,14 @@ defmodule LIRC.Producer do
       code -> dispatch_events(:queue.in(code, queue), demand, [])
     end
   end
+
+  def handle_cast({:notify, event}, {queue, demand}) do
+    queue = :queue.in(event, queue)
+    dispatch_events(queue, demand, [])
+  end
+
+  def notify(device, command, send_state) do
+    packet = %{command: command, destination: device, send: send_state, source: :internal, bus: :lirc}
+    GenStage.cast(__MODULE__, {:notify, packet})
+  end
 end

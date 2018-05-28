@@ -1,5 +1,5 @@
 defmodule LIRC.ProcessSpec do
-  use ESpec
+  use ESpec, async: false
 
   describe "receiving lines from the port" do
     before do: allow GenServer |> to(accept :cast, fn(_, _) -> nil end)
@@ -51,6 +51,12 @@ defmodule LIRC.ProcessSpec do
       [irsend: irsend, irw: _] = Application.get_env(:universal_remote, LIRC.Process)
       {:ok} = subject()
       expect(System) |> to(accepted :cmd, [irsend, ["send_once", "foxtel", "KEY_VOLUMEUP"], [stderr_to_stdout: true]])
+    end
+
+    it "sends a notification" do
+      allow LIRC.Producer |> to(accept :notify, fn(_, _, _) -> nil end)
+      {:ok} = subject()
+      expect(LIRC.Producer) |> to(accepted :notify, [:foxtel, :key_volumeup, "send_once"])
     end
 
     describe "invalid remote" do

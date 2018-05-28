@@ -34,13 +34,16 @@ defmodule LIRC.Process do
     {body, exit_code} = System.cmd(state[:irsend], [send_state, device_string, key_string], [stderr_to_stdout: true])
 
     case exit_code do
-      0 -> {:reply, {:ok}, state}
+      0 -> (
+        LIRC.Producer.notify(device, key, send_state)
+        {:reply, {:ok}, state}
+      )
       1 -> exec_error(body, state)
     end
   end
 
   def handle_info({_, {:data, {:eol, line}}}, state) do
-    GenServer.cast(LIRC.Producer, {:lirc, line})
+    GenStage.cast(LIRC.Producer, {:lirc, line})
     {:noreply, state}
   end
 

@@ -8,81 +8,92 @@ defmodule Server.Web.Remotes.Router do
                      json_decoder: Poison
   plug :dispatch
 
-  def send_json(conn, status, obj) do
+  get "/" do
+    serve(%{action: :get_buses})
+    |> send_reply(conn)
+  end
+
+  get "/:bus" do
+    serve(%{action: :get_remotes, bus: bus})
+    |> send_reply(conn)
+  end
+
+  get "/:bus/:remote" do
+    serve(%{action: :get_keys, bus: bus, remote: remote})
+    |> send_reply(conn)
+  end
+
+  put "/:bus/:remote/send" do
+    %{"key" => key} = conn.body_params
+
+    serve(%{action: :send_key, bus: bus, remote: remote, key: key})
+    |> send_reply(conn)
+  end
+
+  put "/:bus/:remote/start" do
+    %{"key" => key} = conn.body_params
+
+    serve(%{action: :start_key, bus: bus, remote: remote, key: key})
+    |> send_reply(conn)
+  end
+
+  put "/:bus/:remote/stop" do
+    %{"key" => key} = conn.body_params
+
+    serve(%{action: :stop_key, bus: bus, remote: remote, key: key})
+    |> send_reply(conn)
+  end
+
+  post _ do
+    send_reply({:not_acceptable, "Use the PUT verb"}, conn)
+  end
+
+  delete _ do
+    send_reply({:not_acceptable, "DELETE is not supported"}, conn)
+  end
+
+  match _ do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(404, %{error: "Not Found"} |> Poison.encode!)
+  end
+
+  defp serve(payload) do
+    try do
+      API.Remotes.serve(payload |> Map.new(fn {k, v} -> {atomize(k), atomize(v)} end))
+    rescue
+      _ in ArgumentError -> {:error, "Invalid input"}
+    end
+  end
+
+  defp atomize(obj) when is_atom(obj) do
+    obj
+  end
+
+  defp atomize(obj) when is_binary(obj) do
+    String.to_existing_atom(obj)
+  end
+
+  defp send_json(conn, status, obj) do
     conn
     |> put_resp_content_type("application/json")
     |> send_resp(status, obj |> Poison.encode!)
   end
 
-  get "/" do
-    conn
-    |> send_json(200, Remotes.list |> Map.keys)
-  end
-
-  get "/:bus" do
-    with {:ok, module} <- Remotes.get(bus |> String.to_atom),
-         {:ok, list} <- module.devices
-    do
-      send_json(conn, 200, list)
-    else
-      {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
-      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
-    end
-  end
-
-  get "/:bus/:device" do
-    with {:ok, module} <- Remotes.get(bus |> String.to_atom),
-         {:ok, list} <- module.commands(device |> String.to_atom)
-    do
-      send_json(conn, 200, list)
-    else
-      {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
-      {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
-      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
-    end
-  end
-
-  put "/:bus/:device/send" do
-    %{"key" => key} = conn.body_params
-
-    with {:ok, module} <- Remotes.get(bus |> String.to_atom),
-         {:ok} <- module.send_once(device |> String.to_atom, key |> String.to_atom)
-    do
-      send_json(conn, 200, %{ok: "ok"})
-    else
+  defp send_reply(reply, conn) do
+    case reply do
+      {:ok} -> conn |> send_resp(:ok, "")
+      {:reply, payload} -> send_json(conn, 200, payload)
+      :unknown_bus -> send_json(conn, 404, %{error: "Not Found"})
+      :unknown_remote -> send_json(conn, 404, %{error: "Not Found"})
+      :unknown_command -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
       {:unknown_command} -> send_json(conn, 404, %{error: "Not Found"})
-      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
-    end
-  end
-
-  put "/:bus/:device/start" do
-    %{"key" => key} = conn.body_params
-
-    with {:ok, module} <- Remotes.get(bus |> String.to_atom),
-         {:ok} <- module.send_start(device |> String.to_atom, key |> String.to_atom)
-    do
-      send_json(conn, 200, %{ok: "ok"})
-    else
-      {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
-      {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
-      {:unknown_command} -> send_json(conn, 404, %{error: "Not Found"})
-      _ ->  send_json(conn, 500, %{error: "Unknown Error"})
-    end
-  end
-
-  put "/:bus/:device/stop" do
-    %{"key" => key} = conn.body_params
-
-    with {:ok, module} <- Remotes.get(bus |> String.to_atom),
-         {:ok} <- module.send_stop(device |> String.to_atom, key |> String.to_atom)
-    do
-      send_json(conn, 200, %{ok: "ok"})
-    else
-      {:unknown_bus} -> send_json(conn, 404, %{error: "Not Found"})
-      {:unknown_remote} -> send_json(conn, 404, %{error: "Not Found"})
-      {:unknown_command} -> send_json(conn, 404, %{error: "Not Found"})
+      {:unknown_status} -> send_json(conn, 404, %{error: "Not Found"})
+      {:not_acceptable, message} -> send_json(conn, 406, %{error: message})
+      {:timeout, message} -> send_json(conn, 408, %{error: message})
+      {:error, message} -> send_json(conn, 500, %{error: message})
       _ ->  send_json(conn, 500, %{error: "Unknown Error"})
     end
   end

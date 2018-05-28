@@ -5,6 +5,7 @@ defmodule Device do
 
       @commands []
       @statuses []
+      @pollers []
 
       @before_compile Device
     end
@@ -101,6 +102,18 @@ defmodule Device do
     end)
   end
 
+  defmacro poll(name, timeout, do: block) do
+    quote do
+      @pollers [{unquote(:"run_poller_#{name}"), unquote(timeout)} | @pollers]
+
+      def handle_info(unquote(:"run_poller_#{name}"), state) do
+        unquote(block)
+        Process.send_after(self(), unquote(:"run_poller_#{name}"), unquote(timeout))
+        {:noreply, [], state}
+      end
+    end
+  end
+
   defmacro __before_compile__(_env) do
     quote do
       use GenStage
@@ -114,7 +127,12 @@ defmodule Device do
           false -> nil
           true -> apply(__MODULE__, :setup, [])
         end
-        {:consumer, %{}, subscribe_to: [Bus]}
+
+        pid = {:consumer, %{}, subscribe_to: [CEC.Producer, LIRC.Producer, Event.Producer]}
+
+        @pollers |> Enum.each(fn({handler, timeout}) -> Process.send_after(self(), handler, timeout) end)
+
+        pid
       end
 
       def handle_events(events, _from, state) do
@@ -140,7 +158,7 @@ defmodule Device do
 
       def wait_for(filter, do: block) do
         {:ok, pid} = Devices.OneShotListener.wait_for(filter, self())
-        
+
         _ = block
 
         receive do

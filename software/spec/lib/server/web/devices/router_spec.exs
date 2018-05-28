@@ -13,10 +13,9 @@ defmodule Server.Web.Devices.RouterSpec do
       end
 
       it "returns a list of all the remotes registered" do
-        expect(response().resp_body |> Poison.decode!) |> to(eq(["test_device", "test_device_2"]))
+        expect(response().resp_body |> Poison.decode! |> Access.get("devices")) |> to(eq(["test", "test_device", "test_device_2"]))
       end
     end
-
 
     describe "/:device" do
       let :device, do: "test_device"
@@ -30,8 +29,12 @@ defmodule Server.Web.Devices.RouterSpec do
           expect(response().status) |> to(eq 200)
         end
 
+        it "returns the device name" do
+          expect(response().resp_body |> Poison.decode! |> Access.get("device")) |> to(eq(device()))
+        end
+
         it "returns metadata" do
-          expect(response().resp_body |> Poison.decode! |> Access.get("meta_data")) |> to(eq(%{"name" => "Test Device"}))
+          expect(response().resp_body |> Poison.decode! |> Access.get("metadata")) |> to(eq(%{"name" => "Test Device"}))
         end
 
         it "returns a list of commands" do
@@ -204,7 +207,7 @@ defmodule Server.Web.Devices.RouterSpec do
         end
 
         it "returns a list of statuses" do
-          expect(response().resp_body |> Poison.decode! |> Enum.sort) |> to(eq(["volume", "mute"] |> Enum.sort))
+          expect(response().resp_body |> Poison.decode! |> Map.get("statuses") |> Enum.sort) |> to(eq(["volume", "mute"] |> Enum.sort))
         end
       end
 
@@ -240,7 +243,7 @@ defmodule Server.Web.Devices.RouterSpec do
           end
 
           it "returns the status" do
-            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"volume" => 50}))
+            expect(response().resp_body |> Poison.decode!) |> to(eq(%{"device" => device(), "status" => %{"volume" => 50}}))
           end
         end
 

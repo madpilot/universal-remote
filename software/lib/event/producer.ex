@@ -26,7 +26,7 @@ defmodule Event.Producer do
   end
 
   def handle_cast({:broadcast, payload}, {queue, demand}) do
-    Logger.debug "Event - #{inspect payload}" 
+    Logger.debug "Event - #{inspect payload}"
     dispatch_events(:queue.in(payload, queue), demand, [])
   end
 

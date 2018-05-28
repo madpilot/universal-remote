@@ -2,18 +2,18 @@ defmodule MockRemote do
   @behaviour UniversalRemote.Remotes.Behaviour
 
   def devices do
-    {:ok, ["test_device"]}
+    {:ok, ["test_remote"]}
   end
 
-  def commands(device) do
-    case device do
+  def commands(remote) do
+    case remote do
       :exists -> {:ok, ["key_up", "key_down"]}
       :not_exists -> {:unknown_remote}
     end
   end
 
-  def send_once(device, key) do
-    case device do
+  def send_once(remote, key) do
+    case remote do
       :exists -> case key do
         :exists -> {:ok}
         :not_exists -> {:unknown_command}
@@ -22,8 +22,8 @@ defmodule MockRemote do
     end
   end
 
-  def send_start(device, key) do
-    case device do
+  def send_start(remote, key) do
+    case remote do
       :exists -> case key do
         :exists -> {:ok}
         :not_exists -> {:unknown_command}
@@ -32,8 +32,8 @@ defmodule MockRemote do
     end
   end
 
-  def send_stop(device, key) do
-    case device do
+  def send_stop(remote, key) do
+    case remote do
       :exists -> case key do
         :exists -> {:ok}
         :not_exists -> {:unknown_command}
@@ -61,7 +61,7 @@ defmodule Server.Web.Remotes.RouterSpec do
       end
 
       it "returns a list of all the remotes registered" do
-        expect(response().resp_body |> Poison.decode!) |> to(eq(["cec", "lirc", "test"]))
+        expect(response().resp_body |> Poison.decode! |> Access.get("remotes")) |> to(eq(["cec", "lirc", "test"]))
       end
     end
 
@@ -76,8 +76,8 @@ defmodule Server.Web.Remotes.RouterSpec do
           expect(response().status) |> to(eq 200)
         end
 
-        it "returns a list of devices" do
-          expect(response().resp_body |> Poison.decode!) |> to(eq(["test_device"]))
+        it "returns a list of remotes" do
+          expect(response().resp_body |> Poison.decode! |> Access.get("remotes")) |> to(eq(["test_remote"]))
         end
       end
 
@@ -94,29 +94,33 @@ defmodule Server.Web.Remotes.RouterSpec do
       end
     end
 
-    describe "/:bus/:device" do
+    describe "/:bus/:remote" do
       let :bus, do: "test"
-      let :device, do: "foxtel"
+      let :remote, do: "foxtel"
 
-      let :response, do: conn(:get, "/#{bus()}/#{device()}") |> Router.call([])
+      let :response, do: conn(:get, "/#{bus()}/#{remote()}") |> Router.call([])
 
       describe "bus that is registered" do
         let :bus, do: "test"
 
-        describe "a device that is registered" do
-          let :device, do: "exists"
+        describe "a remote that is registered" do
+          let :remote, do: "exists"
 
           it "returns a 200" do
             expect(response().status) |> to(eq 200)
           end
 
+          it "returns the remote name" do
+            expect(response().resp_body |> Poison.decode! |> Access.get("remote")) |> to(eq(remote()))
+          end
+
           it "returns a list of keys" do
-            expect(response().resp_body |> Poison.decode!) |> to(eq(["key_up", "key_down"]))
+            expect(response().resp_body |> Poison.decode! |> Access.get("keys")) |> to(eq(["key_up", "key_down"]))
           end
         end
 
-        describe "a device that is not registered" do
-          let :device, do: "not_exists"
+        describe "a remote that is not registered" do
+          let :remote, do: "not_exists"
 
           it "returns a 404" do
             expect(response().status) |> to(eq 404)
@@ -141,20 +145,20 @@ defmodule Server.Web.Remotes.RouterSpec do
       end
     end
 
-    describe "/:bus/:device/send" do
+    describe "/:bus/:remote/send" do
       let :bus, do: "test"
-      let :device, do: "exists"
+      let :remote, do: "exists"
       let :key, do: "exists"
 
-      let :response, do: conn(:put, "/#{bus()}/#{device()}/send", "{\"key\":\"#{key()}\"}")
+      let :response, do: conn(:put, "/#{bus()}/#{remote()}/send", "{\"key\":\"#{key()}\"}")
         |> put_req_header("content-type", "application/json")
         |> Router.call([])
 
       describe "bus that is registered" do
         let :bus, do: "test"
 
-        describe "a device that is registered" do
-          let :device, do: "exists"
+        describe "a remote that is registered" do
+          let :remote, do: "exists"
 
           describe "a command that exists" do
             let :key, do: "exists"
@@ -177,8 +181,8 @@ defmodule Server.Web.Remotes.RouterSpec do
           end
         end
 
-        describe "a device that doesn't exist" do
-          let :device, do: "not_exists"
+        describe "a remote that doesn't exist" do
+          let :remote, do: "not_exists"
 
           it "returns a 404" do
             expect(response().status) |> to(eq 404)
@@ -203,20 +207,20 @@ defmodule Server.Web.Remotes.RouterSpec do
       end
     end
 
-    describe "/:bus/:device/start" do
+    describe "/:bus/:remote/start" do
       let :bus, do: "test"
-      let :device, do: "exists"
+      let :remote, do: "exists"
       let :key, do: "exists"
 
-      let :response, do: conn(:put, "/#{bus()}/#{device()}/start", "{\"key\":\"#{key()}\"}")
+      let :response, do: conn(:put, "/#{bus()}/#{remote()}/start", "{\"key\":\"#{key()}\"}")
         |> put_req_header("content-type", "application/json")
         |> Router.call([])
 
       describe "bus that is registered" do
         let :bus, do: "test"
 
-        describe "a device that is registered" do
-          let :device, do: "exists"
+        describe "a remote that is registered" do
+          let :remote, do: "exists"
 
           describe "a command that exists" do
             let :key, do: "exists"
@@ -239,8 +243,8 @@ defmodule Server.Web.Remotes.RouterSpec do
           end
         end
 
-        describe "a device that doesn't exist" do
-          let :device, do: "not_exists"
+        describe "a remote that doesn't exist" do
+          let :remote, do: "not_exists"
 
           it "returns a 404" do
             expect(response().status) |> to(eq 404)
@@ -265,20 +269,20 @@ defmodule Server.Web.Remotes.RouterSpec do
       end
     end
 
-    describe "/:bus/:device/stop" do
+    describe "/:bus/:remote/stop" do
       let :bus, do: "test"
-      let :device, do: "exists"
+      let :remote, do: "exists"
       let :key, do: "exists"
 
-      let :response, do: conn(:put, "/#{bus()}/#{device()}/stop", "{\"key\":\"#{key()}\"}")
+      let :response, do: conn(:put, "/#{bus()}/#{remote()}/stop", "{\"key\":\"#{key()}\"}")
         |> put_req_header("content-type", "application/json")
         |> Router.call([])
 
       describe "bus that is registered" do
         let :bus, do: "test"
 
-        describe "a device that is registered" do
-          let :device, do: "exists"
+        describe "a remote that is registered" do
+          let :remote, do: "exists"
 
           describe "a command that exists" do
             let :key, do: "exists"
@@ -301,8 +305,8 @@ defmodule Server.Web.Remotes.RouterSpec do
           end
         end
 
-        describe "a device that doesn't exist" do
-          let :device, do: "not_exists"
+        describe "a remote that doesn't exist" do
+          let :remote, do: "not_exists"
 
           it "returns a 404" do
             expect(response().status) |> to(eq 404)
