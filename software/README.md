@@ -103,13 +103,7 @@ defmodule Foxtel do
   end
 end
 
-Foxtel
-|> Web.register('foxtel')
-|> MQTT.register('foxtel')
 ```
-
-The last couple of lines registers the Foxtel module with the Web server and MQTT server (with the name "foxtel") so you can turn on this virtual device from both APIs
-
 Finally, You can also register APIs with inputs, and get notifications when things like volume changes occur
 
 ```elixir

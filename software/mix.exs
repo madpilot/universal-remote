@@ -19,7 +19,7 @@ defmodule UniversalRemote.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {UniversalRemote, []},
-     applications: [:ranch, :cowboy, :logger, :plug],
+     applications: [:ranch, :cowboy, :logger, :plug, :file_system],
      preferred_cli_env: [espec: :test]]
   end
 
@@ -39,6 +39,9 @@ defmodule UniversalRemote.Mixfile do
       {:excoveralls, "~> 0.8", only: :test},
       {:logger_file_backend, "~> 0.0.10"},
       {:plug, "~> 1.5.0"},
-      {:poison, "~> 3.1"}]
+      {:poison, "~> 3.1"},
+      {:fs, "~> 2.12.0"},
+      {:file_system, "~> 0.2"}
+    ]
   end
 end

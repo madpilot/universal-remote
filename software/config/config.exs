@@ -42,6 +42,9 @@ config :universal_remote,
   }
 
 config :universal_remote,
+  devices_paths: ["priv/devices"]
+
+config :universal_remote,
   remotes: %{
     cec: CEC.Remote,
     lirc: LIRC.Remote

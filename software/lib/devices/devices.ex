@@ -2,8 +2,8 @@
   use GenServer
   require Logger
 
-  def start_link(initial = %{}) do
-    GenServer.start_link(__MODULE__, initial, [name: __MODULE__])
+  def start_link() do
+    GenServer.start_link(__MODULE__, %{}, [name: __MODULE__])
   end
 
   def init(initial) do
