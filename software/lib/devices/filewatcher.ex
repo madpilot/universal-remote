@@ -13,17 +13,42 @@ defmodule Devices.Filewatcher do
   end
 
   def remove_code(file) do
-    Devices.Loader.unload_file(file)
+    Devices.Loader.unload(file)
   end
 
-  def update_code(file) do
-    Devices.Loader.load_file(file)
+  def load_code(file) do
+    Devices.Loader.load(file)
+  end
+
+  def reload_code(file) do
+    Devices.Loader.reload(file)
+  end
+
+  defp normalize_events_result(_has_created, _has_modified, _has_renamed, has_removed) when has_removed == true do
+    :removed
+  end
+
+  defp normalize_events_result(has_created, _has_modified, has_renamed, _has_removed) when has_created == true and not has_renamed == true do
+    :created
+  end
+
+  defp normalize_events_result(has_created, has_modified, has_renamed, _has_removed) when has_renamed == true or (not has_created and has_modified) do
+    :updated
+  end
+
+  defp normalize_events(events) do
+    has_removed = events |> Enum.filter(fn(event) -> event == :removed end) |> length != 0
+    has_created = events |> Enum.filter(fn(event) -> event == :created end) |> length != 0
+    has_modified = events |> Enum.filter(fn(event) -> event == :modified end) |> length != 0
+    has_renamed = events |> Enum.filter(fn(event) -> event == :renamed end) |> length != 0
+    normalize_events_result(has_created, has_modified, has_renamed, has_removed)
   end
 
   def handle_file_event(events, path) do
-    case events |> Enum.member?(:removed) do
-      true -> remove_code(path)
-      false -> update_code(path)
+    case normalize_events(events) do
+      :created -> load_code(path)
+      :updated -> reload_code(path)
+      :removed -> remove_code(path)
     end
   end
 

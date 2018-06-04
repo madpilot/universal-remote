@@ -9,9 +9,15 @@ config :universal_remote, LIRC.Process,
 
 config :universal_remote,
   devices: %{
-    test_device: "spec/fixtures/test_device.exs",
-    test_device_2: "spec/fixtures/test_device_2.exs"
+    test_device: "spec/autoload_fixtures/test_device.exs",
+    test_device_2: "spec/autoload_fixtures/test_device_2.exs"
   }
+
+
+config :universal_remote,
+  devices_paths: ["spec/autoload_fixtures"]
+
+config :universal_remote, autoload_devices: false
 
 # Print only warnings and errors during test
 config :logger, level: :warn

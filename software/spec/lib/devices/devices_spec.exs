@@ -2,26 +2,8 @@ defmodule DevicesSpec do
   use ESpec
 
   describe "map of Devices" do
-    let :initial, do: %{}
-    let! :pid, do: GenServer.start_link(Devices, initial()) |> elem(1)
+    let! :pid, do: GenServer.start_link(Devices, %{}) |> elem(1)
     finally do: Process.exit(pid(), :normal)
-
-    describe "init" do
-      subject do: Devices.init(initial())
-
-      it "sets the initial state" do
-        expect(subject()) |> to(eq {:ok, initial()})
-      end
-
-      context "non-empty initial state" do
-        let :path, do: "spec/fixtures/test_device.exs"
-        let :initial, do: %{test: path()}
-
-        it "should attempt to load the file" do
-          subject()
-        end
-      end
-    end
 
     describe "register" do
       subject do: GenServer.call(pid(), {:list})
@@ -101,7 +83,6 @@ defmodule DevicesSpec do
     describe "send_once" do
       subject do: GenServer.call(pid(), {:send_once, :test, :key_power_on})
       describe "module exists" do
-        let :initial, do: %{}
         before do: GenServer.call(pid(), {:register, :test, TestDevice})
 
         it "returns ok" do
@@ -121,7 +102,6 @@ defmodule DevicesSpec do
     describe "send_start" do
       subject do: GenServer.call(pid(), {:send_start, :test, :key_power_on})
       describe "module exists" do
-        let :initial, do: %{}
         before do: GenServer.call(pid(), {:register, :test, TestDevice})
 
         it "returns ok" do
@@ -130,8 +110,6 @@ defmodule DevicesSpec do
       end
 
       describe "module does not exist" do
-        let :initial, do: %{}
-
         it "returns unknown_device" do
           expect(subject()) |> to(eq {:unknown_device})
         end
@@ -141,7 +119,6 @@ defmodule DevicesSpec do
     describe "send_stop" do
       subject do: GenServer.call(pid(), {:send_stop, :test, :key_power_on})
       describe "module exists" do
-        let :initial, do: %{}
         before do: GenServer.call(pid(), {:register, :test, TestDevice})
 
         it "returns ok" do
@@ -150,8 +127,6 @@ defmodule DevicesSpec do
       end
 
       describe "module does not exist" do
-        let :initial, do: %{}
-
         it "returns unknown_device" do
           expect(subject()) |> to(eq {:unknown_device})
         end
@@ -162,7 +137,6 @@ defmodule DevicesSpec do
       subject do: GenServer.call(pid(), {:get_status, :test, :volume})
 
       describe "module exists" do
-        let :initial, do: %{}
         before do: GenServer.call(pid(), {:register, :test, TestDevice})
 
         it "returns the status" do
@@ -171,8 +145,6 @@ defmodule DevicesSpec do
       end
 
       describe "module does not exist" do
-        let :initial, do: %{}
-
         it "returns unknown_device" do
           expect(subject()) |> to(eq {:unknown_device})
         end
@@ -181,15 +153,13 @@ defmodule DevicesSpec do
   end
 
   describe "Proxy methods" do
-    let :initial, do: %{}
-
     describe "start_link" do
       before do: allow GenServer |> to(accept :start_link, fn(_, _, _) -> nil end)
-      subject do: Devices.start_link(initial())
+      subject do: Devices.start_link()
 
       it "calls GenServer.start_link" do
         subject()
-        expect(GenServer) |> to(accepted :start_link, [Devices, initial(), [name: Devices]])
+        expect(GenServer) |> to(accepted :start_link, [Devices, %{}, [name: Devices]])
       end
     end
 
@@ -197,7 +167,7 @@ defmodule DevicesSpec do
       before do: allow GenServer |> to(accept :register, fn(_, _) -> nil end)
 
       describe "register" do
-        before do: Devices.start_link(initial())
+        before do: Devices.start_link()
         subject do: Devices.register(:test, Test)
 
         it "calls registered via GenServer" do
@@ -207,7 +177,7 @@ defmodule DevicesSpec do
       end
 
       describe "deregister" do
-        before do: Devices.start_link(initial())
+        before do: Devices.start_link()
         subject do: Devices.deregister(:test)
 
         it "calls registered via GenServer" do
@@ -217,7 +187,7 @@ defmodule DevicesSpec do
       end
 
       describe "registered" do
-        before do: Devices.start_link(initial())
+        before do: Devices.start_link()
         subject do: Devices.registered(:test)
 
         it "calls registered via GenServer" do
@@ -227,7 +197,7 @@ defmodule DevicesSpec do
       end
 
       describe "get" do
-        before do: Devices.start_link(initial())
+        before do: Devices.start_link()
         subject do: Devices.get(:test)
 
         it "calls get via GenServer" do
@@ -237,7 +207,7 @@ defmodule DevicesSpec do
       end
 
       describe "list" do
-        before do: Devices.start_link(initial())
+        before do: Devices.start_link()
         subject do: Devices.list
 
         it "calls list via GenServer" do
@@ -249,7 +219,7 @@ defmodule DevicesSpec do
       describe "send_once" do
         let :name, do: :name
         let :command, do: :power_on
-        before do: Devices.start_link(initial())
+        before do: Devices.start_link()
         subject do: Devices.send_once(name(), command())
 
         it "calls send via GenServer" do
@@ -261,7 +231,7 @@ defmodule DevicesSpec do
       describe "send_start" do
         let :name, do: :name
         let :command, do: :power_on
-        before do: Devices.start_link(initial())
+        before do: Devices.start_link()
         subject do: Devices.send_start(name(), command())
 
         it "calls send via GenServer" do
@@ -273,7 +243,7 @@ defmodule DevicesSpec do
       describe "send_stop" do
         let :name, do: :name
         let :command, do: :power_on
-        before do: Devices.start_link(initial())
+        before do: Devices.start_link()
         subject do: Devices.send_stop(name(), command())
 
         it "calls send via GenServer" do

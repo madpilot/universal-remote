@@ -34,6 +34,7 @@ defmodule Device do
     # by it's own key.
     #
     # If there is only one command, just use the block
+    # TODO: This can be simplified by recursion
     blocks = case block do
       {:__block__ , [], command_blocks} -> command_blocks
         |> Enum.map(fn(block) -> {:__block__, [], [block]} end)
