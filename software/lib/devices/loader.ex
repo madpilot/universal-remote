@@ -77,6 +77,7 @@ defmodule Devices.Loader do
 
     loaded = find_modules(state, file)
     Devices.Loader.Unload.devices(loaded)
+    Devices.Loader.Unload.modules(loaded)
     state = Devices.Loader.Unload.files(state, loaded)
 
     {:reply, :ok, state}
@@ -91,6 +92,7 @@ defmodule Devices.Loader do
   end
 
   def reload(file) do
+    GenServer.call(__MODULE__, {:unload, file})
     GenServer.call(__MODULE__, {:load, file})
   end
 
