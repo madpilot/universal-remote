@@ -22,6 +22,15 @@ defmodule Devices.Loader do
             Devices.Loader.Load.supervise(modules)
             modules
           )
+          {:error, %{file: file, line: line, description: description}} -> (
+            Logger.error "Error compiling #{file}"
+            Logger.error "Line #{line}: #{description}"
+            []
+          )
+          {:error, message} -> (
+            Logger.error(message)
+            []
+          )
         end
       end)
 
@@ -49,9 +58,17 @@ defmodule Devices.Loader do
       Devices.Loader.Load.devices(modules)
       Devices.Loader.Load.supervise(modules)
 
-      {:reply, modules, state}
+      {:reply, {:ok, modules}, state}
     else
-      {:error, e} -> {:error, e}
+      {:error, %{file: file, line: line, description: description}} -> (
+        Logger.error "Error compiling #{file}"
+        Logger.error "Line #{line}: #{description}"
+        {:reply, {:error, "Compile error"}, state}
+      )
+      {:error, e} -> (
+        Logger.error(e)
+        {:reply, {:error, e}, state}
+      )
     end
   end
 

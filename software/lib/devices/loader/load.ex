@@ -4,15 +4,15 @@ defmodule Devices.Loader.Load do
 
   defp compile(file) do
     try do
-      result = case Devices.Loader.Code.load_file(file) do
-        [{module, _}] -> %Module{file: file, module: module, name: module |> Macro.underscore |> String.to_atom}
+      case Devices.Loader.Code.load_file(file) do
+        [{module, _}] -> {:ok, %Module{file: file, module: module, name: module |> Macro.underscore |> String.to_atom}}
+        [] -> {:error, "Empty file"}
       end
-
-      {:ok, result}
     rescue
       e in CompileError -> (
-        Logger.error "Error compiling #{file}"
-        Logger.error "Line #{e.line}: #{e.description}"
+        {:error, e}
+      )
+      e in TokenMissingError -> (
         {:error, e}
       )
     end
@@ -49,21 +49,25 @@ defmodule Devices.Loader.Load do
   def supervise(modules) do
     modules
       |> Enum.map(fn(module) ->
-        spec = %{
-          id: module.module,
-          start: {module.module, :start_link, []},
-          restart: :transient,
-          type: :worker
-        }
+        try do
+          spec = %{
+            id: module.module,
+            start: {module.module, :start_link, []},
+            restart: :transient,
+            type: :worker
+          }
 
-        result = case Process.whereis(Supervisors.Devices) do
-          nil -> nil
-          pid -> pid |> Supervisor.start_child(spec)
-        end
+          result = case Process.whereis(Supervisors.Devices) do
+            nil -> nil
+            pid -> pid |> Supervisor.start_child(spec)
+          end
 
-        case result do
-          {:ok, _} -> Logger.info "#{spec[:id]} has been started and is under supervision"
-          {:error, reasons} -> Logger.info "#{spec[:id]} not started: #{reasons |> elem(0)}"
+          case result do
+            {:ok, _} -> Logger.info "#{spec[:id]} has been started and is under supervision"
+            {:error, reasons} -> Logger.info "#{spec[:id]} not started: #{reasons |> elem(0)}"
+          end
+        rescue
+          _ in Protocol.UndefinedError -> Logger.error "Unable to supervise #{module.module}. Did you add 'use Device'?"
         end
       end)
   end
