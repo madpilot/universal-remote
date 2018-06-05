@@ -129,11 +129,9 @@ defmodule Device do
           true -> apply(__MODULE__, :setup, [])
         end
 
-        pid = {:consumer, %{}, subscribe_to: [CEC.Producer, LIRC.Producer, Event.Producer]}
-
+        result = {:consumer, %{}, subscribe_to: [CEC.Producer, LIRC.Producer, Event.Producer]}
         @pollers |> Enum.each(fn({handler, timeout}) -> Process.send_after(self(), handler, timeout) end)
-
-        pid
+        result
       end
 
       def handle_events(events, _from, state) do
@@ -143,6 +141,10 @@ defmodule Device do
           end)
 
         {:noreply, [], state}
+      end
+
+      def using_device do
+        true
       end
 
       def commands do

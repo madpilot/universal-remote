@@ -9,23 +9,13 @@ defmodule UniversalRemote do
     # Define workers and child supervisors to be supervised
     {:ok, remotes} = Application.fetch_env(:universal_remote, :remotes)
     {:ok, devices} = Application.fetch_env(:universal_remote, :devices)
-    {:ok, devices_paths} = Application.fetch_env(:universal_remote, :devices_paths)
-    {:ok, autoload_devices} = Application.fetch_env(:universal_remote, :autoload_devices)
 
     children = [
-      worker(Remotes, [remotes]),
-      worker(Devices, []),
-      worker(Devices.Loader, [devices_paths]),
-      supervisor(Devices.State, []),
-      supervisor(Supervisors.Buses, []),
-      supervisor(Supervisors.Servers, []),
-      supervisor(Handlers, [devices])
+      worker(Remotes, [remotes], restart: :permanent),
+      supervisor(Supervisors.Devices, [], restart: :permanent),
+      supervisor(Supervisors.Buses, [], restart: :permanent),
+      supervisor(Supervisors.Servers, [], restart: :permanent)
     ]
-
-    children = case autoload_devices do
-      true -> [ worker(Devices.Filewatcher, [devices_paths]) | children ]
-      false -> children
-    end
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options

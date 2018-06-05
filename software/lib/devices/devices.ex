@@ -53,12 +53,12 @@
   end
 
   def handle_call({:register, name, module}, _from, state) do
-    Logger.info "Remotes - Registering #{inspect module} as #{name}"
+    Logger.info "Devices - Registering #{inspect module} as #{name}"
     {:reply, {:ok}, state |> Map.merge(%{name => module})}
   end
 
   def handle_call({:deregister, name}, _from, state) do
-    Logger.info "Remotes - Deregistering #{name}"
+    Logger.info "Devices - Deregistering #{name}"
     {:reply, {:ok}, state |> Map.delete(name)}
   end
 
