@@ -22,7 +22,7 @@ defmodule Devices.LoaderSpec do
     subject do: Devices.Loader.load(file())
 
     before do
-      File.cp(file_1(), file())
+      File.cp!(file_1(), file())
     end
 
     finally do
@@ -34,7 +34,7 @@ defmodule Devices.LoaderSpec do
       describe "where the module name is the same" do
         before do
           Devices.Loader.load(file())
-          File.cp(file_2(), file())
+          File.cp!(file_2(), file())
           Devices.Loader.load(file())
         end
 
@@ -50,7 +50,7 @@ defmodule Devices.LoaderSpec do
       describe "where the module name is different" do
         before do
           Devices.Loader.load(file())
-          File.cp(file_3(), file())
+          File.cp!(file_3(), file())
           Devices.Loader.load(file())
         end
 

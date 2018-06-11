@@ -88,12 +88,12 @@ defmodule Devices.Loader do
   end
 
   def load(file) do
+    GenServer.call(__MODULE__, {:unload, file})
     GenServer.call(__MODULE__, {:load, file})
   end
 
   def reload(file) do
-    GenServer.call(__MODULE__, {:unload, file})
-    GenServer.call(__MODULE__, {:load, file})
+    load(file)
   end
 
   def unload(file) do
