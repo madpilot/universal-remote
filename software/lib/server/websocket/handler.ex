@@ -22,6 +22,10 @@ defmodule Server.Websocket.Handler do
     {:reply, {:text, "pong"}, req, state}
   end
 
+  def websocket_handle({:ping, _}, req, state) do
+    {:ok, req, state}
+  end
+
   def websocket_handle({:text, message}, req, state) do
     try do
       with {:ok, payload} <- message |> Poison.decode,

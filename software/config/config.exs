@@ -36,7 +36,6 @@ config :universal_remote,
 
 config :universal_remote,
   devices: %{
-    foxtel: "priv/devices/foxtel.exs",
     receiver: "priv/devices/receiver.exs",
     lounge_room: "priv/devices/lounge_room.exs"
   }
